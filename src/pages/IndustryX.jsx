@@ -3,7 +3,7 @@ import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import heroImage from '../assets/images/hack_7Nov.jpg'
 import problems from './Data/problemStatements.json'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { supabase } from '../lib/supabaseClient.js'
 
 function Stat({ icon, label, value }){
@@ -17,9 +17,8 @@ function Stat({ icon, label, value }){
 
 export default function IndustryX(){
   const registerRef = useRef(null)
-  const [submitted, setSubmitted] = useState(null)
+  // success UI handled via toasts only
   const [toasts, setToasts] = useState([])
-  const shareMessage = "We just registered for IndustryX — let’s build something amazing! 🚀"
   const [loading, setLoading] = useState(false)
 
   const pushToast = ({ type = 'info', title, message, duration = 4500 }) => {
@@ -32,15 +31,7 @@ export default function IndustryX(){
   }
   const dismissToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id))
 
-  const onCopyLink = async () => {
-    try {
-      const url = window?.location?.href || ''
-      await navigator.clipboard.writeText(url)
-      pushToast({ type: 'success', title: 'Copied to clipboard!', message: 'Share the link with your teammates.' })
-    } catch {
-      pushToast({ type: 'error', title: 'Copy failed', message: 'Could not copy the link.' })
-    }
-  }
+  // sharing helpers removed with new success flow (toast only)
 
   const onRegisterClick = () => {
     registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -75,7 +66,7 @@ export default function IndustryX(){
     return () => observer.disconnect()
   }, [])
 
-  const { register, control, handleSubmit, watch, setValue, setError, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, setValue, setError, reset, formState: { errors } } = useForm({
     defaultValues: {
       teamName: '',
       leaderName: '',
@@ -83,23 +74,38 @@ export default function IndustryX(){
       leaderPhone: '',
       year: '',
       division: '',
-      members: [
-        { name: '', email: '' },
-        { name: '', email: '' }
-      ],
-      problemId: '',
-      problemTitle: ''
+      problem1_id: '',
+      problem1_title: '',
+      problem2_id: '',
+      problem2_title: '',
+      problem3_id: '',
+      problem3_title: '',
+      member1_name: '',
+      member1_email: '',
+      member2_name: '',
+      member2_email: '',
+      member3_name: '',
+      member3_email: '',
+      member4_name: '',
+      member4_email: '',
     }
   })
-  const { fields, append, remove } = useFieldArray({ control, name: 'members' })
-
-  const selectedProblemId = watch('problemId')
-  const selectedProblem = useMemo(() => problems.find(p => String(p.id) === String(selectedProblemId)), [selectedProblemId])
+  const p1 = watch('problem1_id')
+  const p2 = watch('problem2_id')
+  const p3 = watch('problem3_id')
+  const p1Obj = useMemo(() => problems.find(p => String(p.id) === String(p1)), [p1])
+  const p2Obj = useMemo(() => problems.find(p => String(p.id) === String(p2)), [p2])
+  const p3Obj = useMemo(() => problems.find(p => String(p.id) === String(p3)), [p3])
 
   useEffect(() => {
-    if (selectedProblem) setValue('problemTitle', selectedProblem.title, { shouldValidate: true, shouldDirty: true })
-    else setValue('problemTitle', '', { shouldValidate: true, shouldDirty: true })
-  }, [selectedProblem, setValue])
+    setValue('problem1_title', p1Obj?.title || '', { shouldValidate: true })
+  }, [p1Obj, setValue])
+  useEffect(() => {
+    setValue('problem2_title', p2Obj?.title || '', { shouldValidate: true })
+  }, [p2Obj, setValue])
+  useEffect(() => {
+    setValue('problem3_title', p3Obj?.title || '', { shouldValidate: true })
+  }, [p3Obj, setValue])
 
   const onSubmit = async (data) => {
     try {
@@ -135,6 +141,16 @@ export default function IndustryX(){
         return
       }
 
+      // Validate three unique problems client-side
+      if (!p1 || !p2 || !p3) {
+        pushToast({ type: 'error', title: 'Select 3 problems', message: 'Please select Problem 1, Problem 2 and Problem 3.' })
+        return
+      }
+      if (p1 === p2 || p1 === p3 || p2 === p3) {
+        pushToast({ type: 'error', title: 'Duplicate problems', message: 'Each problem choice must be different.' })
+        return
+      }
+
       const { error } = await supabase.from('teams').insert([
         {
           team_name: teamName,
@@ -143,9 +159,20 @@ export default function IndustryX(){
           leader_phone: data.leaderPhone,
           year_of_study: data.year,
           division: data.division,
-          problem_id: Number(data.problemId),
-          problem_title: data.problemTitle,
-          members: data.members,
+          problem1_id: Number(data.problem1_id),
+          problem1_title: data.problem1_title,
+          problem2_id: Number(data.problem2_id),
+          problem2_title: data.problem2_title,
+          problem3_id: Number(data.problem3_id),
+          problem3_title: data.problem3_title,
+          member1_name: data.member1_name,
+          member1_email: data.member1_email,
+          member2_name: data.member2_name,
+          member2_email: data.member2_email,
+          member3_name: data.member3_name,
+          member3_email: data.member3_email,
+          member4_name: data.member4_name || null,
+          member4_email: data.member4_email || null,
         },
       ])
       if (error) {
@@ -164,9 +191,9 @@ export default function IndustryX(){
         }
         throw error
       }
-      setSubmitted({ ...data, teamName, leaderEmail })
       pushToast({ type: 'success', title: 'Registration Complete 🎉', message: 'Your team has been registered successfully for IndustryX!' })
       setTimeout(() => registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
+      reset()
     } catch (err) {
       console.error(err)
       pushToast({ type: 'error', title: 'Submission failed', message: err?.message || 'Network or unknown error.' })
@@ -178,7 +205,7 @@ export default function IndustryX(){
     pushToast({ type: 'error', title: 'Fix required fields', message: 'Please fill all required fields correctly.' })
     registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
-  const remainingAdds = 5 - fields.length
+  // removed dynamic member add/remove; fixed 4 member blocks (1-3 required, 4 optional)
 
   return (
     <div className="selection:bg-accent/30 selection:text-white">
@@ -241,7 +268,7 @@ export default function IndustryX(){
             <div className="reveal flex items-end justify-between gap-4">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold">Problem Statements</h2>
-                <p className="text-white/70">Pick one problem and register your team against it.</p>
+                <p className="text-white/70">Select your top 3 distinct problems and then register your team.</p>
               </div>
             </div>
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -261,40 +288,63 @@ export default function IndustryX(){
 
           <section className="mt-16" ref={registerRef}>
             <div className="reveal">
-              {submitted ? (
-                <>
-                  <h2 className="text-3xl sm:text-4xl font-extrabold text-green-400 flex items-center gap-3">
-                    <i className="fa-solid fa-circle-check text-green-400" />
-                    🎉 Registration Successful!
-                  </h2>
-                  <p className="text-white/80 mt-2">Your team is officially part of IndustryX! We can’t wait to see your innovation. Keep an eye on your leader’s email for event updates.</p>
-                </>
-              ) : (
-                <>
-                  <h2 className="text-2xl sm:text-3xl font-bold">Register Your Team</h2>
-                  <p className="text-white/70">All fields are required. Minimum 3 members including leader. Maximum 6.</p>
-                </>
-              )}
+              <h2 className="text-2xl sm:text-3xl font-bold">Register Your Team</h2>
+              <p className="text-white/70">Minimum 4 team members including leader. Maximum 5 including leader. Please pick 3 distinct problems.</p>
             </div>
 
-            {!submitted && (
             <form className={`mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 ${loading ? 'opacity-60 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit, onInvalid)} noValidate>
               <div className="lg:col-span-1 glass p-6 rounded-2xl">
-                <label className="text-white/70 text-sm">Problem Statement</label>
-                <select
-                  className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2"
-                  {...register('problemId', { required: 'Please select a problem' })}
-                >
-                  <option value="">Select Problem</option>
-                  {problems.map(p => (
-                    <option key={p.id} value={p.id}>Problem {p.id} — {p.title.slice(0,40)}{p.title.length>40?'…':''}</option>
-                  ))}
-                </select>
-                {errors.problemId && <p className="text-red-400 text-sm mt-1">{errors.problemId.message}</p>}
-
+                <label className="text-white/70 text-sm">Problem Choices</label>
+                {/* Problem 1 */}
+                <div className="mt-2">
+                  <label className="text-white/60 text-xs">Problem 1</label>
+                  <select className="mt-1 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2"
+                    {...register('problem1_id', {
+                      required: 'Select Problem 1',
+                      validate: (v) => (v !== watch('problem2_id') && v !== watch('problem3_id')) || 'Problems must be different'
+                    })}
+                  >
+                    <option value="">Select Problem 1</option>
+                    {problems.map(p => (
+                      <option key={p.id} value={p.id}>Problem {p.id} — {p.title.slice(0,40)}{p.title.length>40?'…':''}</option>
+                    ))}
+                  </select>
+                  {errors.problem1_id && <p className="text-red-400 text-sm mt-1">{errors.problem1_id.message}</p>}
+                  <input disabled value={p1Obj?.title || ''} className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none" />
+                </div>
+                {/* Problem 2 */}
                 <div className="mt-4">
-                  <label className="text-white/70 text-sm">Problem Title</label>
-                  <input disabled value={selectedProblem?.title || ''} className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none" />
+                  <label className="text-white/60 text-xs">Problem 2</label>
+                  <select className="mt-1 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2"
+                    {...register('problem2_id', {
+                      required: 'Select Problem 2',
+                      validate: (v) => (v !== watch('problem1_id') && v !== watch('problem3_id')) || 'Problems must be different'
+                    })}
+                  >
+                    <option value="">Select Problem 2</option>
+                    {problems.map(p => (
+                      <option key={p.id} value={p.id}>Problem {p.id} — {p.title.slice(0,40)}{p.title.length>40?'…':''}</option>
+                    ))}
+                  </select>
+                  {errors.problem2_id && <p className="text-red-400 text-sm mt-1">{errors.problem2_id.message}</p>}
+                  <input disabled value={p2Obj?.title || ''} className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none" />
+                </div>
+                {/* Problem 3 */}
+                <div className="mt-4">
+                  <label className="text-white/60 text-xs">Problem 3</label>
+                  <select className="mt-1 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2"
+                    {...register('problem3_id', {
+                      required: 'Select Problem 3',
+                      validate: (v) => (v !== watch('problem1_id') && v !== watch('problem2_id')) || 'Problems must be different'
+                    })}
+                  >
+                    <option value="">Select Problem 3</option>
+                    {problems.map(p => (
+                      <option key={p.id} value={p.id}>Problem {p.id} — {p.title.slice(0,40)}{p.title.length>40?'…':''}</option>
+                    ))}
+                  </select>
+                  {errors.problem3_id && <p className="text-red-400 text-sm mt-1">{errors.problem3_id.message}</p>}
+                  <input disabled value={p3Obj?.title || ''} className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none" />
                 </div>
               </div>
 
@@ -350,39 +400,35 @@ export default function IndustryX(){
                 <div className="md:col-span-2 glass p-6 rounded-2xl">
                   <div className="flex items-center justify-between">
                     <label className="text-white/70 text-sm">Members (excluding leader)</label>
-                    <div className="text-white/60 text-xs">Min 2, Max 5</div>
+                    <div className="text-white/60 text-xs">Member 1–3 required, 4 optional</div>
                   </div>
                   <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {fields.map((field, index) => (
-                      <div key={field.id} className="glass p-4 rounded-xl border border-white/10">
+                    {[1,2,3,4].map((i) => (
+                      <div key={i} className="glass p-4 rounded-xl border border-white/10">
                         <div>
-                          <label className="text-white/70 text-xs">Member Name</label>
-                          <input className="mt-2 w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2" {...register(`members.${index}.name`, { required: 'Name required' })} />
-                          {errors.members?.[index]?.name && <p className="text-red-400 text-xs mt-1">{errors.members[index].name.message}</p>}
+                          <label className="text-white/70 text-xs">Member {i} Name{i<4?' *':''}</label>
+                          <input className="mt-2 w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2"
+                            {...register(`member${i}_name`, { required: i<4 ? 'Name required' : false })}
+                          />
+                          {errors[`member${i}_name`] && <p className="text-red-400 text-xs mt-1">{errors[`member${i}_name`].message}</p>}
                         </div>
                         <div className="mt-3">
-                          <label className="text-white/70 text-xs">Member Email</label>
-                          <input type="email" className="mt-2 w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2" {...register(`members.${index}.email`, {
-                            required: 'Email required',
-                            pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email' }
-                          })} />
-                          {errors.members?.[index]?.email && <p className="text-red-400 text-xs mt-1">{errors.members[index].email.message}</p>}
+                          <label className="text-white/70 text-xs">Member {i} Email{i<4?' *':''}</label>
+                          <input type="email" className="mt-2 w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2"
+                            {...register(`member${i}_email`, {
+                              required: i<4 ? 'Email required' : false,
+                              validate: (v) => {
+                                if (!v) return i===4 ? true : 'Email required'
+                                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Enter a valid email'
+                              }
+                            })}
+                          />
+                          {errors[`member${i}_email`] && <p className="text-red-400 text-xs mt-1">{errors[`member${i}_email`].message}</p>}
                         </div>
-                        {fields.length > 2 && (
-                          <div className="mt-3 text-right">
-                            <button type="button" onClick={() => remove(index)} className="px-3 py-2 rounded-lg glass hover:scale-[1.02] transition">Remove</button>
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="text-white/60 text-xs">You can add {Math.max(0, remainingAdds)} more</div>
-                    <button type="button" disabled={remainingAdds <= 0} onClick={() => append({ name: '', email: '' })} className="px-4 py-2 rounded-lg glass hover:scale-[1.02] transition disabled:opacity-50">Add Member</button>
-                  </div>
                 </div>
-
-                <input type="hidden" {...register('problemTitle', { required: true })} />
                 <div className="md:col-span-2">
                   <button type="submit" disabled={loading} className="btn-magnetic w-full sm:w-auto px-8 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition disabled:opacity-60 disabled:cursor-not-allowed">
                     {loading ? (<><i className="fa-solid fa-circle-notch fa-spin mr-2"/> Submitting...</>) : 'Submit Registration'}
@@ -390,55 +436,6 @@ export default function IndustryX(){
                 </div>
               </div>
             </form>
-            )}
-
-            {submitted && (
-              <div className="mt-6 reveal in">
-                <div className="glass p-6 rounded-2xl success-glow">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80">
-                    <div><span className="text-white">Team:</span> {submitted.teamName}</div>
-                    <div><span className="text-white">Leader:</span> {submitted.leaderName} ({submitted.leaderEmail})</div>
-                    <div><span className="text-white">Phone:</span> {submitted.leaderPhone}</div>
-                    <div><span className="text-white">Year/Div:</span> {submitted.year} / {submitted.division}</div>
-                    <div className="md:col-span-2"><span className="text-white">Problem:</span> {submitted.problemId} — {submitted.problemTitle}</div>
-                    <div className="md:col-span-2"><span className="text-white">Members:</span> {submitted.members.map(m=>m.name).join(', ')}</div>
-                  </div>
-
-                  {/* Share Row */}
-                  <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="text-white/70 text-sm flex items-center gap-2">
-                      <i className="fa-solid fa-share-nodes text-highlight" />
-                      Share your registration
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button type="button" onClick={onCopyLink} className="px-4 py-2 rounded-lg glass hover:scale-[1.02] transition">Copy Link</button>
-                      {/* Social icons */}
-                      <a
-                        className="p-2 rounded-lg glass hover:scale-[1.05] transition"
-                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window?.location?.href || '')}`}
-                        target="_blank" rel="noreferrer" aria-label="Share on LinkedIn"
-                      >
-                        <i className="fa-brands fa-linkedin" />
-                      </a>
-                      <a
-                        className="p-2 rounded-lg glass hover:scale-[1.05] transition"
-                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(window?.location?.href || '')}`}
-                        target="_blank" rel="noreferrer" aria-label="Share on X"
-                      >
-                        <i className="fa-brands fa-x-twitter" />
-                      </a>
-                      <a
-                        className="p-2 rounded-lg glass hover:scale-[1.05] transition"
-                        href={`https://wa.me/?text=${encodeURIComponent(shareMessage + ' ' + (window?.location?.href || ''))}`}
-                        target="_blank" rel="noreferrer" aria-label="Share on WhatsApp"
-                      >
-                        <i className="fa-brands fa-whatsapp" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </section>
         </div>
       </main>
