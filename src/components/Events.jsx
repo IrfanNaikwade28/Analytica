@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import hackImage from "../assets/images/hack_7Nov.jpg";
 const UPCOMING = [
   {
@@ -7,7 +8,7 @@ const UPCOMING = [
     date: "07-OCT-2k25",
     image: `${hackImage}`,
     isHighlighted: true,
-    href: "#join"
+    href: "/industryx"
   },
 ];
 
@@ -59,17 +60,18 @@ export default function Events(){
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-full">
             {UPCOMING.map((event,idx)=> (
               <div key={event.title} className={`relative overflow-hidden rounded-2xl glass card-3d reveal upcoming-card ${event.isHighlighted? 'ring-2 ring-highlight/60 shadow-glow':''}`} style={{transitionDelay: `${idx*80}ms`}}>
+                <Link to={event.href}>
                 <div className="relative">
                   <img className="w-full h-52 sm:h-56 md:h-60 object-cover" src={event.image} alt={event.title} />
                   {event.isHighlighted && (<div className="absolute top-4 left-4 px-3 py-1 text-xs rounded-full bg-highlight text-ink font-bold">Next Event</div>)}
                 </div>
-                <a href={event.href}>
+                
                   <div className="p-6">
                     <h4 className="text-xl font-semibold">{event.title}</h4>
                     <p className="text-white/70 mt-1">{event.description}</p>
                     <div className="mt-3 text-white/60 text-sm"><i className="fa-regular fa-calendar-days mr-2"></i>{event.date}</div>
                   </div>
-                </a>
+                </Link>
               </div>
             ))}
           </div>
@@ -95,7 +97,7 @@ export default function Events(){
 
         {/* Benefits section to preserve anchors */}
         <section id="benefits" className="pt-24">
-          <div className="reveal text-center max-w-2xl mx-auto max-w-full">
+          <div className="reveal text-center max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold max-w-full">Why Join <span className="text-gradient uppercase">Analytica</span>?</h2>
             <p className="mt-2 text-white/70 max-w-full">Learn faster, build stronger, and grow together—with support at every step.</p>
           </div>

@@ -1,0 +1,12 @@
+[
+  {"id":1, "title":"AI-driven Predictive Maintenance", "mentor":"John Doe", "company":"TechCorp Pvt. Ltd.", "pdf":"/assets/industryx/problem-1.pdf"},
+  {"id":2, "title":"Real-time Anomaly Detection in IoT", "mentor":"Priya Sharma", "company":"InnovaSense", "pdf":"/assets/industryx/problem-2.pdf"},
+  {"id":3, "title":"Demand Forecasting for Retail", "mentor":"Arjun Mehta", "company":"RetailWorks", "pdf":"/assets/industryx/problem-3.pdf"},
+  {"id":4, "title":"Fraud Detection for Payments", "mentor":"Emily Chen", "company":"PayGuard", "pdf":"/assets/industryx/problem-4.pdf"},
+  {"id":5, "title":"Vision-based Defect Inspection", "mentor":"Ahmed Khan", "company":"VisionX Industries", "pdf":"/assets/industryx/problem-5.pdf"},
+  {"id":6, "title":"Energy Consumption Optimization", "mentor":"Sara Lee", "company":"GreenGrid", "pdf":"/assets/industryx/problem-6.pdf"},
+  {"id":7, "title":"Customer Churn Prediction", "mentor":"Rohan Kulkarni", "company":"TelMax", "pdf":"/assets/industryx/problem-7.pdf"},
+  {"id":8, "title":"NLP-based Support Ticket Triage", "mentor":"Meera Nair", "company":"HelpFlow", "pdf":"/assets/industryx/problem-8.pdf"},
+  {"id":9, "title":"Route Optimization for Logistics", "mentor":"Carlos Martinez", "company":"LogiGo", "pdf":"/assets/industryx/problem-9.pdf"},
+  {"id":10, "title":"Personalized Recommendation Engine", "mentor":"Isha Gupta", "company":"Streamly", "pdf":"/assets/industryx/problem-10.pdf"}
+]

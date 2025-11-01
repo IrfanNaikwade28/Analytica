@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -36,9 +37,17 @@ export default function Header() {
     { id: "contact", label: "Contact" },
   ];
 
+  const location = useLocation();
+  const navigate = useNavigate();
   const handleAnchor = (e, id) => {
     e.preventDefault();
     setMobileOpen(false);
+    // If we're not on home route, route to /#id so App can handle smooth scrolling.
+    if (location.pathname !== "/" && location.pathname !== "/home") {
+      navigate(`/#${id}`);
+      return;
+    }
+    // Already on home: smooth scroll directly
     const el = document.getElementById(id);
     if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
   };
@@ -47,12 +56,12 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50">
       <nav id="navbar" className={`transition-colors duration-300 ${scrolled ? "scrolled" : ""}`}>
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="#home" onClick={(e)=>handleAnchor(e,'home')} className="flex items-center gap-3">
+          <Link to="/" onClick={(e)=>handleAnchor(e,'home')} className="flex items-center gap-3">
             <span className="analytica-logo">Analytica</span>
-          </a>
+          </Link>
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map(l => (
-              <a key={l.id} href={`#${l.id}`} onClick={(e)=>handleAnchor(e,l.id)} className={`js-nav-link nav-link ${active===l.id? 'active-nav':''}`}>{l.label}</a>
+              <Link key={l.id} to={l.id === 'home' ? '/' : `/${l.id}`} onClick={(e)=>handleAnchor(e,l.id)} className={`js-nav-link nav-link ${active===l.id? 'active-nav':''}`}>{l.label}</Link>
             ))}
           </div>
           <button id="mobile-menu-button" className={`md:hidden relative z-50 hamburger-button ${mobileOpen? 'active':''}`} aria-label="Toggle menu" onClick={()=>setMobileOpen(v=>!v)}>
@@ -78,15 +87,15 @@ export default function Header() {
           </div>
           <nav className="menu-navigation">
             {navLinks.map((l,idx)=> (
-              <a key={l.id}
-                 href={`#${l.id}`}
-                 className="menu-link"
-                 style={{transitionDelay: `${0.1* (idx+1)}s`}}
-                 onClick={(e)=>handleAnchor(e,l.id)}>
+          <Link key={l.id}
+            to={l.id === 'home' ? '/' : `/${l.id}`}
+            className="menu-link"
+            style={{transitionDelay: `${0.1* (idx+1)}s`}}
+            onClick={(e)=>handleAnchor(e,l.id)}>
                 <span className="menu-link-icon"><i className="fa-solid fa-circle" /></span>
                 <span className="menu-link-text">{l.label}</span>
                 <span className="menu-link-arrow"><i className="fa-solid fa-arrow-right" /></span>
-              </a>
+          </Link>
             ))}
           </nav>
           <p className="menu-tagline">Empowering data-driven tech leaders</p>
