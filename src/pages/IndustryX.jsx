@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
-import heroFallback from '../assets/images/hack_7Nov.jpg'
-import problems from './IndustryX/problemStatements.json'
+import heroImage from '../assets/images/hack_7Nov.jpg'
+import problems from './Data/problemStatements.json'
 import { useForm, useFieldArray } from 'react-hook-form'
+import { supabase } from '../lib/supabaseClient.js'
 
 function Stat({ icon, label, value }){
   return (
@@ -17,14 +18,39 @@ function Stat({ icon, label, value }){
 export default function IndustryX(){
   const registerRef = useRef(null)
   const [submitted, setSubmitted] = useState(null)
+  const [toasts, setToasts] = useState([])
+  const shareMessage = "We just registered for IndustryX — let’s build something amazing! 🚀"
+  const [loading, setLoading] = useState(false)
+
+  const pushToast = ({ type = 'info', title, message, duration = 4500 }) => {
+    const id = Date.now() + Math.random()
+    const toast = { id, type, title, message, duration }
+    setToasts((prev) => [...prev, toast])
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, duration)
+  }
+  const dismissToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id))
+
+  const onCopyLink = async () => {
+    try {
+      const url = window?.location?.href || ''
+      await navigator.clipboard.writeText(url)
+      pushToast({ type: 'success', title: 'Copied to clipboard!', message: 'Share the link with your teammates.' })
+    } catch {
+      pushToast({ type: 'error', title: 'Copy failed', message: 'Could not copy the link.' })
+    }
+  }
 
   const onRegisterClick = () => {
     registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const heroImage = useMemo(() => '/assets/industryx/hero.png', [])
+  // Ensure we land at the top (hero) when navigating to /industryx
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [])
 
-  // Reveal-on-scroll animations (match pattern used in other sections)
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -35,11 +61,9 @@ export default function IndustryX(){
       })
     }, { threshold: 0.1 })
 
-    // Observe all .reveal elements in this page
     const els = document.querySelectorAll('.reveal')
     els.forEach((el) => observer.observe(el))
 
-    // In case first paint happens already in view, nudge observer
     setTimeout(() => {
       els.forEach((el) => {
         const rect = el.getBoundingClientRect()
@@ -51,14 +75,12 @@ export default function IndustryX(){
     return () => observer.disconnect()
   }, [])
 
-  // Form setup
-  const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+  const { register, control, handleSubmit, watch, setValue, setError, formState: { errors } } = useForm({
     defaultValues: {
       teamName: '',
       leaderName: '',
       leaderEmail: '',
       leaderPhone: '',
-      department: '',
       year: '',
       division: '',
       members: [
@@ -74,26 +96,95 @@ export default function IndustryX(){
   const selectedProblemId = watch('problemId')
   const selectedProblem = useMemo(() => problems.find(p => String(p.id) === String(selectedProblemId)), [selectedProblemId])
 
-  // keep problem title in sync when selection changes
   useEffect(() => {
     if (selectedProblem) setValue('problemTitle', selectedProblem.title, { shouldValidate: true, shouldDirty: true })
     else setValue('problemTitle', '', { shouldValidate: true, shouldDirty: true })
   }, [selectedProblem, setValue])
 
-  const onSubmit = (data) => {
-    setSubmitted(data)
-    // scroll to summary
-    setTimeout(() => registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
-  }
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true)
+      // Normalize team name and check uniqueness before insert
+      const teamName = data.teamName.trim()
+      const leaderEmail = data.leaderEmail.trim().toLowerCase()
+      const { data: existing, error: checkError } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('team_name', teamName)
+        .maybeSingle()
 
-  const remainingAdds = 5 - fields.length // up to 5 optional members (leader is outside)
+      if (checkError) throw checkError
+      if (existing) {
+        setError('teamName', { type: 'manual', message: 'This team name is already taken. Please choose a different name.' })
+        pushToast({ type: 'error', title: 'Duplicate team name', message: 'This team name is already taken. Please choose a different name.' })
+        registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+
+      // Optional: Check duplicate leader email if constrained in DB
+      const { data: existingEmail, error: emailCheckError } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('leader_email', leaderEmail)
+        .maybeSingle()
+      if (emailCheckError) throw emailCheckError
+      if (existingEmail) {
+        setError('leaderEmail', { type: 'manual', message: 'An entry with this leader email already exists.' })
+        pushToast({ type: 'error', title: 'Duplicate email', message: 'An entry with this leader email already exists.' })
+        registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+
+      const { error } = await supabase.from('teams').insert([
+        {
+          team_name: teamName,
+          leader_name: data.leaderName,
+          leader_email: leaderEmail,
+          leader_phone: data.leaderPhone,
+          year_of_study: data.year,
+          division: data.division,
+          problem_id: Number(data.problemId),
+          problem_title: data.problemTitle,
+          members: data.members,
+        },
+      ])
+      if (error) {
+        // Handle race condition where another team claimed the name just now
+        if ((error.code === '23505') || (error.message && error.message.toLowerCase().includes('duplicate key'))) {
+          const isEmail = error.message && error.message.includes('leader_email')
+          if (isEmail) {
+            setError('leaderEmail', { type: 'manual', message: 'An entry with this leader email already exists.' })
+            pushToast({ type: 'error', title: 'Duplicate email', message: 'An entry with this leader email already exists.' })
+          } else {
+            setError('teamName', { type: 'manual', message: 'This team name is already taken. Please choose a different name.' })
+            pushToast({ type: 'error', title: 'Duplicate team name', message: 'This team name is already taken. Please choose a different name.' })
+          }
+          registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          return
+        }
+        throw error
+      }
+      setSubmitted({ ...data, teamName, leaderEmail })
+      pushToast({ type: 'success', title: 'Registration Complete 🎉', message: 'Your team has been registered successfully for IndustryX!' })
+      setTimeout(() => registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
+    } catch (err) {
+      console.error(err)
+      pushToast({ type: 'error', title: 'Submission failed', message: err?.message || 'Network or unknown error.' })
+    } finally {
+      setLoading(false)
+    }
+  }
+  const onInvalid = () => {
+    pushToast({ type: 'error', title: 'Fix required fields', message: 'Please fill all required fields correctly.' })
+    registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+  const remainingAdds = 5 - fields.length
 
   return (
     <div className="selection:bg-accent/30 selection:text-white">
       <Header />
       <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
-          {/* Hero Section */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start min-h-[calc(100vh-6rem)] w-full pt-6">
             <div className="reveal">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">IndustryX</h1>
@@ -107,13 +198,12 @@ export default function IndustryX(){
                 <button onClick={onRegisterClick} className="btn-magnetic px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition">Register Now</button>
                 <a href="/assets/industryx/guide.pdf" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl glass hover:scale-105 transition">Guide PDF</a>
               </div>
-              {/* Extra quick info to better fill the space and answer FAQs at a glance */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="glass p-4 rounded-xl flex items-start gap-3">
                   <i className="fa-solid fa-users text-highlight mt-1" />
                   <div>
                     <div className="font-semibold">Eligibility</div>
-                    <p className="text-white/70 text-sm">Open to FE/SE/TE/BE; cross-branch teams welcome.</p>
+                    <p className="text-white/70 text-sm">Open to FY/SY/TY; Students.</p>
                   </div>
                 </div>
                 <div className="glass p-4 rounded-xl flex items-start gap-3">
@@ -142,12 +232,11 @@ export default function IndustryX(){
             </div>
             <div className="reveal flex items-center justify-center h-full">
               <div className="overflow-hidden rounded-2xl flex items-center justify-center h-64 sm:h-full">
-                <img src={heroImage} onError={(e)=>{e.currentTarget.src = heroFallback}} alt="IndustryX Hero" className="w-full h-64 sm:h-80 object-cover" />
+                <img src={heroImage} alt="IndustryX Hero" className="w-full h-64 sm:h-80 object-cover" />
               </div>
             </div>
           </section>
 
-          {/* Problem Statements */}
           <section className="mt-16">
             <div className="reveal flex items-end justify-between gap-4">
               <div>
@@ -170,15 +259,26 @@ export default function IndustryX(){
             </div>
           </section>
 
-          {/* Registration Form */}
           <section className="mt-16" ref={registerRef}>
             <div className="reveal">
-              <h2 className="text-2xl sm:text-3xl font-bold">Register Your Team</h2>
-              <p className="text-white/70">All fields are required. Minimum 3 members including leader. Maximum 6.</p>
+              {submitted ? (
+                <>
+                  <h2 className="text-3xl sm:text-4xl font-extrabold text-green-400 flex items-center gap-3">
+                    <i className="fa-solid fa-circle-check text-green-400" />
+                    🎉 Registration Successful!
+                  </h2>
+                  <p className="text-white/80 mt-2">Your team is officially part of IndustryX! We can’t wait to see your innovation. Keep an eye on your leader’s email for event updates.</p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl sm:text-3xl font-bold">Register Your Team</h2>
+                  <p className="text-white/70">All fields are required. Minimum 3 members including leader. Maximum 6.</p>
+                </>
+              )}
             </div>
 
             {!submitted && (
-            <form className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form className={`mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 ${loading ? 'opacity-60 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit, onInvalid)} noValidate>
               <div className="lg:col-span-1 glass p-6 rounded-2xl">
                 <label className="text-white/70 text-sm">Problem Statement</label>
                 <select
@@ -198,7 +298,6 @@ export default function IndustryX(){
                 </div>
               </div>
 
-              {/* Right: Team details */}
               <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="glass p-6 rounded-2xl">
                   <label className="text-white/70 text-sm">Team Name</label>
@@ -230,20 +329,14 @@ export default function IndustryX(){
                   {errors.leaderPhone && <p className="text-red-400 text-sm mt-1">{errors.leaderPhone.message}</p>}
                 </div>
 
-                <div className="glass p-6 rounded-2xl">
-                  <label className="text-white/70 text-sm">Department</label>
-                  <input placeholder="e.g., SY_DS" className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2" {...register('department', { required: 'Department is required' })} />
-                  {errors.department && <p className="text-red-400 text-sm mt-1">{errors.department.message}</p>}
-                </div>
 
                 <div className="glass p-6 rounded-2xl">
                   <label className="text-white/70 text-sm">Year</label>
                   <select className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2" {...register('year', { required: 'Year is required' })}>
                     <option value="">Select Year</option>
-                    <option value="FE">FE</option>
-                    <option value="SE">SE</option>
-                    <option value="TE">TE</option>
-                    <option value="BE">BE</option>
+                    <option value="FY_DS">FY_DS</option>
+                    <option value="SY_DS">SY_DS</option>
+                    <option value="TY_DS">TY_DS</option>
                   </select>
                   {errors.year && <p className="text-red-400 text-sm mt-1">{errors.year.message}</p>}
                 </div>
@@ -254,7 +347,6 @@ export default function IndustryX(){
                   {errors.division && <p className="text-red-400 text-sm mt-1">{errors.division.message}</p>}
                 </div>
 
-                {/* Members */}
                 <div className="md:col-span-2 glass p-6 rounded-2xl">
                   <div className="flex items-center justify-between">
                     <label className="text-white/70 text-sm">Members (excluding leader)</label>
@@ -290,37 +382,87 @@ export default function IndustryX(){
                   </div>
                 </div>
 
-                {/* Hidden synced problem title field for submission integrity */}
                 <input type="hidden" {...register('problemTitle', { required: true })} />
-
-                {/* Submit */}
                 <div className="md:col-span-2">
-                  <button type="submit" className="btn-magnetic w-full sm:w-auto px-8 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition">Submit Registration</button>
+                  <button type="submit" disabled={loading} className="btn-magnetic w-full sm:w-auto px-8 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                    {loading ? (<><i className="fa-solid fa-circle-notch fa-spin mr-2"/> Submitting...</>) : 'Submit Registration'}
+                  </button>
                 </div>
               </div>
             </form>
             )}
 
             {submitted && (
-              <div className="mt-6 glass p-6 rounded-2xl reveal">
-                <h3 className="text-xl font-bold text-green-400">Registration Successful</h3>
-                <p className="text-white/70">Thanks, your team is registered. Summary below:</p>
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80">
-                  <div><span className="text-white">Team:</span> {submitted.teamName}</div>
-                  <div><span className="text-white">Leader:</span> {submitted.leaderName} ({submitted.leaderEmail})</div>
-                  <div><span className="text-white">Phone:</span> {submitted.leaderPhone}</div>
-                  <div><span className="text-white">Dept/Year/Div:</span> {submitted.department} / {submitted.year} / {submitted.division}</div>
-                  <div className="md:col-span-2"><span className="text-white">Problem:</span> {submitted.problemId} — {submitted.problemTitle}</div>
-                  <div className="md:col-span-2"><span className="text-white">Members:</span> {submitted.members.map(m=>m.name).join(', ')}</div>
-                </div>
-                <div className="mt-4 flex gap-3">
-                  <button className="px-5 py-2 rounded-xl glass" onClick={()=>setSubmitted(null)}>Edit Response</button>
+              <div className="mt-6 reveal in">
+                <div className="glass p-6 rounded-2xl success-glow">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80">
+                    <div><span className="text-white">Team:</span> {submitted.teamName}</div>
+                    <div><span className="text-white">Leader:</span> {submitted.leaderName} ({submitted.leaderEmail})</div>
+                    <div><span className="text-white">Phone:</span> {submitted.leaderPhone}</div>
+                    <div><span className="text-white">Year/Div:</span> {submitted.year} / {submitted.division}</div>
+                    <div className="md:col-span-2"><span className="text-white">Problem:</span> {submitted.problemId} — {submitted.problemTitle}</div>
+                    <div className="md:col-span-2"><span className="text-white">Members:</span> {submitted.members.map(m=>m.name).join(', ')}</div>
+                  </div>
+
+                  {/* Share Row */}
+                  <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="text-white/70 text-sm flex items-center gap-2">
+                      <i className="fa-solid fa-share-nodes text-highlight" />
+                      Share your registration
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={onCopyLink} className="px-4 py-2 rounded-lg glass hover:scale-[1.02] transition">Copy Link</button>
+                      {/* Social icons */}
+                      <a
+                        className="p-2 rounded-lg glass hover:scale-[1.05] transition"
+                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window?.location?.href || '')}`}
+                        target="_blank" rel="noreferrer" aria-label="Share on LinkedIn"
+                      >
+                        <i className="fa-brands fa-linkedin" />
+                      </a>
+                      <a
+                        className="p-2 rounded-lg glass hover:scale-[1.05] transition"
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(window?.location?.href || '')}`}
+                        target="_blank" rel="noreferrer" aria-label="Share on X"
+                      >
+                        <i className="fa-brands fa-x-twitter" />
+                      </a>
+                      <a
+                        className="p-2 rounded-lg glass hover:scale-[1.05] transition"
+                        href={`https://wa.me/?text=${encodeURIComponent(shareMessage + ' ' + (window?.location?.href || ''))}`}
+                        target="_blank" rel="noreferrer" aria-label="Share on WhatsApp"
+                      >
+                        <i className="fa-brands fa-whatsapp" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </section>
         </div>
       </main>
+          {/* Toasts */}
+          <div className="fixed top-24 right-4 z-[1000] space-y-3">
+            {toasts.map((t) => (
+              <div
+                key={t.id}
+                className={`glass rounded-xl p-4 w-[320px] shadow-lg border transition-all duration-300 ${
+                  t.type === 'success' ? 'border-yellow-400/40' : t.type === 'error' ? 'border-red-400/40' : 'border-white/10'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-white">{t.title}</div>
+                    <div className="text-white/70 text-sm mt-1">{t.message}</div>
+                  </div>
+                  <button className="px-2 py-1 rounded-lg hover:bg-white/10" onClick={() => dismissToast(t.id)} aria-label="Close">
+                    <i className="fa-solid fa-xmark" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
       <Footer />
     </div>
   )
