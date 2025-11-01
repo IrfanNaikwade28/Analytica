@@ -203,7 +203,7 @@ export default function IndustryX(){
                   <i className="fa-solid fa-users text-highlight mt-1" />
                   <div>
                     <div className="font-semibold">Eligibility</div>
-                    <p className="text-white/70 text-sm">Open to FY/SY/TY; Students.</p>
+                    <p className="text-white/70 text-sm">Open to FY/SY/TY Students.</p>
                   </div>
                 </div>
                 <div className="glass p-4 rounded-xl flex items-start gap-3">
