@@ -54,7 +54,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      <nav id="navbar" className={`transition-colors duration-300 ${scrolled ? "scrolled" : "bg-black/30 md:bg-transparent"}`}>
+      <nav id="navbar" className={`transition-colors duration-300 ${scrolled ? "scrolled" : "md:bg-transparent"}`}>
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link to="/" onClick={(e)=>handleAnchor(e,'home')} className="flex items-center gap-3">
             <span className="analytica-logo">Analytica</span>
