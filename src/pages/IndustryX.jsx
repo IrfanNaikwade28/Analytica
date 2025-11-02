@@ -302,10 +302,9 @@ export default function IndustryX() {
 
       pushToast({
         type: "success",
-        title: `✅ Team Registered Successfully
-Thank you for registering for IndustryX.
-A confirmation email has been sent to your leader’s email address.
-Get ready to tackle real-world challenges with your team!`,
+        title: `✅ Registration Successful!
+Your team is all set for IndustryX 2025.
+Confirmation email sent to your leader.`,
       });
       setTimeout(
         () =>
@@ -518,9 +517,8 @@ Get ready to tackle real-world challenges with your team!`,
             </div>
 
             <form
-              className={`mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 ${
-                loading ? "opacity-60 pointer-events-none" : ""
-              }`}
+              className={`mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 ${loading ? "opacity-60 pointer-events-none" : ""
+                }`}
               onSubmit={handleSubmit(onSubmit, onInvalid)}
               noValidate
             >
@@ -817,13 +815,12 @@ Get ready to tackle real-world challenges with your team!`,
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`glass rounded-xl p-4 w-[320px] shadow-lg border transition-all duration-300 ${
-              t.type === "success"
+            className={`glass rounded-xl p-4 w-[320px] shadow-lg border transition-all duration-300 ${t.type === "success"
                 ? "border-yellow-400/40"
                 : t.type === "error"
-                ? "border-red-400/40"
-                : "border-white/10"
-            }`}
+                  ? "border-red-400/40"
+                  : "border-white/10"
+              }`}
           >
             <div className="flex items-start justify-between gap-3">
               <div>
