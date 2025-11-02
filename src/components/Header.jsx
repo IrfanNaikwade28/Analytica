@@ -54,8 +54,8 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      <nav id="navbar" className={`transition-colors duration-300 ${scrolled ? "scrolled" : ""}`}>
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+      <nav id="navbar" className={`transition-colors duration-300 ${scrolled ? "scrolled" : "bg-black/30 md:bg-transparent"}`}>
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link to="/" onClick={(e)=>handleAnchor(e,'home')} className="flex items-center gap-3">
             <span className="analytica-logo">Analytica</span>
           </Link>
@@ -85,6 +85,18 @@ export default function Header() {
               <span className="analytica-logo">Analytica</span>
             </div>
           </div>
+          {/* Internal close button for overlay */}
+          <button
+            aria-label="Close menu"
+            className="absolute w-10 h-10 rounded-xl glass border border-white/10 text-white flex items-center justify-center hover:scale-105 transition z-50"
+            style={{
+              top: "calc(env(safe-area-inset-top, 0) + 0.75rem)",
+              right: "calc(env(safe-area-inset-right, 0) + 0.75rem)",
+            }}
+            onClick={() => setMobileOpen(false)}
+          >
+            <i className="fa-solid fa-xmark text-xl" />
+          </button>
           <nav className="menu-navigation">
             {navLinks.map((l,idx)=> (
           <Link key={l.id}
