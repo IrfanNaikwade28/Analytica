@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Material Name Detection Through Actual Material Scanning",
+    "industry_mentor": "Mr.Vinayak Shankardas",
+    "faculty_mentor": "Mr.S.K. Patil",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_1.pdf"
+  },
+  {
+    "id": 2,
+    "title": "To Develop Zanvar Group Chatbot",
+    "industry_mentor": "Mr.Vinayak Shankardas",
+    "faculty_mentor": "Mrs.R.A. Kothiwale",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_2.pdf"
+  },
+  {
+    "id": 3,
+    "title": "Correct QR Code Sticker Pasting to Right Part (QR Code Sticker Mistake-Proofing and Automation for F.A. Support Machined Parts)",
+    "industry_mentor": "Mr.Sanjay Patil",
+    "faculty_mentor": "M.M. Wakarekar",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_3.pdf"
+  },
+  {
+    "id": 4,
+    "title": "Ladle Usage Data – Manual to Auto for Melting Section",
+    "industry_mentor": "Mr.Anil Solankure",
+    "faculty_mentor": "Mr.M.S. Vadagave",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_4.pdf"
+  },
+  {
+    "id": 5,
+    "title": "Automatic Sand Temperature and Moisture Control System Using Smart Water Sprinklers",
+    "industry_mentor": "Mr.Sanjay Kulkarni",
+    "faculty_mentor": "S.M. Ingavale / S.S. Takmare",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_5.pdf"
+  },
+  {
+    "id": 6,
+    "title": "Fresh Sand Addition Control with Indicator for Bucket Elevator & Belt Working Condition",
+    "industry_mentor": "Mr.Sanjay Kulkarni",
+    "faculty_mentor": "Mr.G.V. Patil",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_6.pdf"
+  },
+  {
+    "id": 7,
+    "title": "Auto Mold Hardness Checking",
+    "industry_mentor": "Mr.Amol Deshinge",
+    "faculty_mentor": "S.T. Powar",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_7.pdf"
+  },
+  {
+    "id": 8,
+    "title": "Tool Life Monitoring – Human Error Prevention",
+    "industry_mentor": "V.S. Shinde",
+    "faculty_mentor": "Mr.S.K. Patil",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_8.pdf"
+  },
+  {
+    "id": 9,
+    "title": "Image Analyzer-Based Auto Detection of Laser Marking Program",
+    "industry_mentor": "Mr.V.S. Shinde",
+    "faculty_mentor": "S.T. Powar",
+    "company": "Zanvar Group",
+    "pdf": "/assets/Industry Problems/Problem_Statement_9.pdf"
+  }
+]

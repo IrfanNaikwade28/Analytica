@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import heroImage from '../assets/images/hack_7Nov.jpg'
-import problems from './Data/problemStatements.json'
+import problems from '../assets/Data/problemStatements.json'
 import { useForm } from 'react-hook-form'
 import { supabase } from '../lib/supabaseClient.js'
 
@@ -20,6 +20,22 @@ export default function IndustryX(){
   // success UI handled via toasts only
   const [toasts, setToasts] = useState([])
   const [loading, setLoading] = useState(false)
+
+  // Map PDFs from src/assets to served URLs so links work in Vite dev/build
+  // This avoids relying on public/ for PDFs and handles spaces in folder names.
+  const pdfMap = useMemo(() => {
+    // Eagerly import all PDFs as URLs
+    const modules = import.meta.glob('../assets/Industry Problems/*.pdf', {
+      eager: true,
+      as: 'url',
+    })
+    const map = {}
+    Object.entries(modules).forEach(([key, url]) => {
+      const filename = key.split('/').pop()
+      map[filename] = url
+    })
+    return map
+  }, [])
 
   const pushToast = ({ type = 'info', title, message, duration = 4500 }) => {
     const id = Date.now() + Math.random()
@@ -215,22 +231,22 @@ export default function IndustryX(){
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start min-h-[calc(100vh-6rem)] w-full pt-6">
             <div className="reveal">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">IndustryX</h1>
-              <p className="mt-3 text-white/80 max-w-xl">Solve real industry problems with your team. Build, validate, and present your solution with guidance from mentors.</p>
+              <p className="mt-3 text-white/80 max-w-xl">Solve real time industry problems with your team. Build, validate, and present your solution with guidance from mentors.</p>
               <div className="mt-4 flex flex-col gap-2">
-                <Stat icon="fa-regular fa-calendar-days" label="Date" value="07 Oct 2K25" />
-                <Stat icon="fa-solid fa-location-dot" label="Venue" value="Data Science Dept., Campus Hall" />
-                <Stat icon="fa-regular fa-hourglass-half" label="Registration Deadline" value="30 Sep 2K25, 11:59 PM" />
+                <Stat icon="fa-regular fa-calendar-days" label="Date" value="7th Nov 2025" />
+                <Stat icon="fa-solid fa-location-dot" label="Venue" value="Data Science Dept, DYPCET" />
+                <Stat icon="fa-regular fa-hourglass-half" label="Registration Deadline" value="5th Nov 2025, 11:59 PM" />
               </div>
               <div className="mt-6 flex gap-3">
                 <button onClick={onRegisterClick} className="btn-magnetic px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition">Register Now</button>
-                <a href="/assets/industryx/guide.pdf" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl glass hover:scale-105 transition">Guide PDF</a>
+                <a href="/assets/industryx/guide.pdf" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl glass hover:scale-105 transition">Rules and Regulation</a>
               </div>
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="glass p-4 rounded-xl flex items-start gap-3">
                   <i className="fa-solid fa-users text-highlight mt-1" />
                   <div>
                     <div className="font-semibold">Eligibility</div>
-                    <p className="text-white/70 text-sm">Open to FY/SY/TY Students.</p>
+                    <p className="text-white/70 text-sm">Open to SY/TY Students.</p>
                   </div>
                 </div>
                 <div className="glass p-4 rounded-xl flex items-start gap-3">
@@ -273,20 +289,39 @@ export default function IndustryX(){
             </div>
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {problems.map((p) => (
-                <div key={p.id} className="glass rounded-2xl p-5 card-3d reveal hover:translate-y-[-4px] hover:shadow-glow transition">
+                <div
+                  key={p.id}
+                  className="glass rounded-2xl p-5 card-3d reveal hover:translate-y-[-4px] hover:shadow-glow transition h-full flex flex-col min-h-[300px]"
+                >
                   <div className="text-sm text-white/60">Problem {p.id}</div>
-                  <h3 className="text-lg font-semibold mt-1">{p.title}</h3>
-                  <div className="mt-2 text-white/70 text-sm">Mentor: <span className="text-white">{p.mentor}</span></div>
-                  <div className="text-white/70 text-sm">Company: <span className="text-white">{p.company}</span></div>
-                  <a href={p.pdf} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg glass hover:scale-[1.02] transition">
-                    View PDF <i className="fa-solid fa-arrow-up-right-from-square" />
-                  </a>
+                  <h3 className="text-lg font-semibold mt-1 line-clamp-3 min-h-[72px]">{p.title}</h3>
+                  <div className="mt-2 text-white/70 text-sm space-y-1">
+                    <div>Industry Mentor: <span className="text-white">{p.industry_mentor}</span></div>
+                    <div>Faculty Mentor: <span className="text-white">{p.faculty_mentor}</span></div>
+                    <div>Company: <span className="text-white">{p.company}</span></div>
+                  </div>
+                  <div className="pt-4 mt-auto">
+                    {(() => {
+                      const filename = (p.pdf && typeof p.pdf === 'string') ? p.pdf.split('/').pop() : ''
+                      const resolvedUrl = filename ? (pdfMap[filename] || p.pdf) : p.pdf
+                      return (
+                        <a
+                          href={resolvedUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg glass hover:scale-[1.02] transition"
+                        >
+                          View PDF <i className="fa-solid fa-arrow-up-right-from-square" />
+                        </a>
+                      )
+                    })()}
+                  </div>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="mt-16" ref={registerRef}>
+          <section className="mt-20" ref={registerRef}>
             <div className="reveal">
               <h2 className="text-2xl sm:text-3xl font-bold">Register Your Team</h2>
               <p className="text-white/70">Minimum 4 team members including leader. Maximum 5 including leader. Please pick 3 distinct problems.</p>
