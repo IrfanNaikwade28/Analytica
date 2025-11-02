@@ -208,27 +208,22 @@ export default function IndustryX(){
         }
         throw error
       }
-      // Fire-and-forget email; don't block UI
+      // Fire-and-forget email; don't block UI (works in prod and with vercel dev, falls back to SMTP if configured)
       setTimeout(() => {
-        if (import.meta.env.PROD) {
-          sendRegistrationConfirmationEmail({
-            leader_name: data.leaderName,
-            leader_email: leaderEmail,
-            team_name: teamName,
-            leader_phone: data.leaderPhone,
-            division: data.division,
-            year_of_study: data.year,
-            problem1_title: data.problem1_title,
-            problem2_title: data.problem2_title,
-            problem3_title: data.problem3_title,
-          })
-        } else {
-          // Local Vite dev does not serve /api; use `vercel dev` to test emails locally
-          console.info('[Email] Skipped sending in dev. Use `vercel dev` or deploy to Vercel to test /api/sendEmail.')
-        }
+        sendRegistrationConfirmationEmail({
+          leader_name: data.leaderName,
+          leader_email: leaderEmail,
+          team_name: teamName,
+          leader_phone: data.leaderPhone,
+          division: data.division,
+          year_of_study: data.year,
+          problem1_title: data.problem1_title,
+          problem2_title: data.problem2_title,
+          problem3_title: data.problem3_title,
+        })
       }, 0)
 
-  pushToast({ type: 'success', title: '🎉Registration successful! Confirmation email sent to leader.' })
+      pushToast({ type: 'success', title: 'Registration successful! Confirmation email sent to leader.' })
       setTimeout(() => registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
       reset()
     } catch (err) {
@@ -259,8 +254,8 @@ export default function IndustryX(){
                 <Stat icon="fa-regular fa-hourglass-half" label="Registration Deadline" value="5th Nov 2025, 11:59 PM" />
               </div>
               <div className="mt-6 flex gap-3">
-                <button onClick={onRegisterClick} className="btn-magnetic px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition">Register Now</button>
-                <a href="/assets/industryx/guide.pdf" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl glass hover:scale-105 transition">Rules and Regulation</a>
+                <button onClick={onRegisterClick} className="btn-magnetic px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition max-sm:text-sm">Register Now</button>
+                <a href="/assets/industryx/guide.pdf" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl  glass hover:scale-105 transition max-sm:text-sm text-center">Rules and Regulation</a>
               </div>
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="glass p-4 rounded-xl flex items-start gap-3">

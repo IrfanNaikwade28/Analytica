@@ -34,5 +34,8 @@ Notes:
 - The subject line is: `🎉 IndustryX Registration Confirmation – Team {team_name}`
 
 Local dev:
-- Vite’s dev server doesn’t run serverless functions. The app skips sending emails when not in production.
-- To test locally, use the Vercel CLI: `vercel dev` (with `RESEND_API_KEY` set) so `/api/sendEmail` is available.
+- Vite’s dev server doesn’t run serverless functions. Use the Vercel CLI: `vercel dev` so `/api/sendEmail` is available, and set env vars in `.env`.
+- You can use either provider locally:
+	- Resend: set `RESEND_API_KEY=...`
+	- SMTP: set `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM`, and optionally `SMTP_USER`, `SMTP_PASS`
+	- The function prefers Resend if set; otherwise it falls back to SMTP.

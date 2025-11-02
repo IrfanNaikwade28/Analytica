@@ -6,11 +6,11 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    console.error('Missing RESEND_API_KEY in environment')
-    res.status(500).json({ error: 'Server not configured for email' })
-    return
-  }
+  const SMTP_HOST = process.env.SMTP_HOST
+  const SMTP_PORT = Number(process.env.SMTP_PORT || 0)
+  const SMTP_USER = process.env.SMTP_USER
+  const SMTP_PASS = process.env.SMTP_PASS
+  const SMTP_FROM = process.env.SMTP_FROM
 
   try {
     const {
@@ -82,29 +82,55 @@ export default async function handler(req, res) {
   </body>
 </html>`
 
-    const resp = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Analytica DSSA <onboarding@resend.dev>',
-        to: [leader_email],
-        subject,
-        html,
-      }),
-    })
+    // Prefer Resend when configured, else fall back to SMTP (for local/dev)
+    if (apiKey) {
+      const resp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Analytica DSSA <onboarding@resend.dev>',
+          to: [leader_email],
+          subject,
+          html,
+        }),
+      })
 
-    if (!resp.ok) {
-      const text = await resp.text().catch(() => '')
-      console.error('Resend error:', resp.status, text)
-      res.status(502).json({ error: 'Failed to send email' })
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => '')
+        console.error('Resend error:', resp.status, text)
+        res.status(502).json({ error: 'Failed to send email via Resend' })
+        return
+      }
+
+      const json = await resp.json().catch(() => ({}))
+      res.status(200).json({ ok: true, id: json.id, provider: 'resend' })
       return
     }
 
-    const json = await resp.json().catch(() => ({}))
-    res.status(200).json({ ok: true, id: json.id })
+    if (SMTP_HOST && SMTP_PORT && SMTP_FROM) {
+      const nodemailer = (await import('nodemailer')).default
+      const transporter = nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: SMTP_PORT,
+        secure: SMTP_PORT === 465, // true for 465, false for others
+        auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
+      })
+
+      const info = await transporter.sendMail({
+        from: SMTP_FROM,
+        to: leader_email,
+        subject,
+        html,
+      })
+      res.status(200).json({ ok: true, id: info?.messageId, provider: 'smtp' })
+      return
+    }
+
+    console.error('Email not configured: missing RESEND_API_KEY or SMTP_* env vars')
+    res.status(500).json({ error: 'Server not configured for email' })
   } catch (e) {
     console.error('Email handler error:', e)
     res.status(500).json({ error: 'Unexpected error' })
