@@ -15,7 +15,7 @@ export default function Footer(){
           </div>
         </div>
         <div className="flex items-center gap-4 text-xl">
-          <a href="#" className="hover:text-highlight transition"><i className="fa-brands fa-instagram"></i></a>
+          <a href="https://www.instagram.com/dssa.dypcet_official/?igsh=MWlhOTIwaG9ldGgweA%3D%3D#" target="_blank" className="hover:text-highlight transition"><i className="fa-brands fa-instagram"></i></a>
           <a href="#" className="hover:text-highlight transition"><i className="fa-brands fa-linkedin"></i></a>
         </div>
         <div className="text-white/50 text-sm">&copy; <span>{year}</span> Analytica. All rights reserved.</div>

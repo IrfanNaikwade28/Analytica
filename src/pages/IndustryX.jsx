@@ -5,6 +5,7 @@ import heroImage from '../assets/images/hack_7Nov.jpg'
 import problems from '../assets/Data/problemStatements.json'
 import { useForm } from 'react-hook-form'
 import { supabase } from '../lib/supabaseClient.js'
+import { sendRegistrationConfirmationEmail } from '../lib/sendEmail.js'
 
 function Stat({ icon, label, value }){
   return (
@@ -207,7 +208,27 @@ export default function IndustryX(){
         }
         throw error
       }
-      pushToast({ type: 'success', title: 'Registration Complete 🎉', message: 'Your team has been registered successfully for IndustryX!' })
+      // Fire-and-forget email; don't block UI
+      setTimeout(() => {
+        if (import.meta.env.PROD) {
+          sendRegistrationConfirmationEmail({
+            leader_name: data.leaderName,
+            leader_email: leaderEmail,
+            team_name: teamName,
+            leader_phone: data.leaderPhone,
+            division: data.division,
+            year_of_study: data.year,
+            problem1_title: data.problem1_title,
+            problem2_title: data.problem2_title,
+            problem3_title: data.problem3_title,
+          })
+        } else {
+          // Local Vite dev does not serve /api; use `vercel dev` to test emails locally
+          console.info('[Email] Skipped sending in dev. Use `vercel dev` or deploy to Vercel to test /api/sendEmail.')
+        }
+      }, 0)
+
+  pushToast({ type: 'success', title: '🎉Registration successful! Confirmation email sent to leader.' })
       setTimeout(() => registerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
       reset()
     } catch (err) {
