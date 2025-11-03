@@ -6,6 +6,7 @@ import problems from "../assets/Data/problemStatements.json";
 import { useForm } from "react-hook-form";
 import { supabase } from "../lib/supabaseClient.js";
 import { sendRegistrationConfirmationEmail } from "../lib/sendEmail.js";
+import rules from "../assets/Data/Rules_and_Regulations.pdf";
 
 function Stat({ icon, label, value }) {
   return (
@@ -27,11 +28,14 @@ export default function IndustryX() {
   // Map PDFs from src/assets to served URLs so links work in Vite dev/build
   // This avoids relying on public/ for PDFs and handles spaces in folder names.
   const pdfMap = useMemo(() => {
-    // Eagerly import all PDFs as URLs
-    const modules = import.meta.glob("../assets/Industry Problems/*.pdf", {
-      eager: true,
-      as: "url",
-    });
+    // Eagerly import all PDFs as URLs (Vite: use query '?url')
+    const modules = import.meta.glob(
+      "../assets/Industry Problems/*.pdf?url",
+      {
+        eager: true,
+        import: "default",
+      }
+    );
     const map = {};
     Object.entries(modules).forEach(([key, url]) => {
       const filename = key.split("/").pop();
@@ -363,7 +367,7 @@ Confirmation email sent to your team.`,
                 <Stat
                   icon="fa-regular fa-calendar-days"
                   label="Date"
-                  value="7th Nov 2025"
+                  value="11th Nov 2025"
                 />
                 <Stat
                   icon="fa-solid fa-location-dot"
@@ -373,7 +377,7 @@ Confirmation email sent to your team.`,
                 <Stat
                   icon="fa-regular fa-hourglass-half"
                   label="Registration Deadline"
-                  value="5th Nov 2025, 11:59 PM"
+                  value="10th Nov 2025, 11:59 PM"
                 />
               </div>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -384,7 +388,7 @@ Confirmation email sent to your team.`,
                   Register Now
                 </button>
                 <a
-                  href="/assets/industryx/guide.pdf"
+                  href={rules}
                   target="_blank"
                   rel="noreferrer"
                   className="w-full sm:w-auto px-6 py-3 rounded-xl glass hover:scale-105 transition text-sm sm:text-base text-center"
@@ -398,7 +402,7 @@ Confirmation email sent to your team.`,
                   <div>
                     <div className="font-semibold">Eligibility</div>
                     <p className="text-white/70 text-sm">
-                      Open to SY/TY Students.
+                      Open to SY/TY Data Science Students Only.
                     </p>
                   </div>
                 </div>
