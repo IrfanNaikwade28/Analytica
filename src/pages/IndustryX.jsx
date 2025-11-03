@@ -21,6 +21,7 @@ function Stat({ icon, label, value }) {
 
 export default function IndustryX() {
   const registerRef = useRef(null);
+  const problemsRef = useRef(null);
   // success UI handled via toasts only
   const [toasts, setToasts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -65,10 +66,10 @@ export default function IndustryX() {
   const dismissToast = (id) =>
     setToasts((prev) => prev.filter((t) => t.id !== id));
 
-  // sharing helpers removed with new success flow (toast only)
 
-  const onRegisterClick = () => {
-    registerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const onProblemsClick = () => {
+    problemsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   // Ensure we land at the top (hero) when navigating to /industryx
@@ -392,10 +393,10 @@ Confirmation email sent to your team.`,
               </div>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={onRegisterClick}
+                  onClick={onProblemsClick}
                   className="btn-magnetic w-full sm:w-auto px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition text-sm sm:text-base"
                 >
-                  Register Now
+                  Problem Statements
                 </button>
                 <a
                   href={rules}
@@ -466,7 +467,7 @@ Confirmation email sent to your team.`,
             </div>
           </section>
 
-          <section className="mt-16">
+          <section className="mt-16" ref={problemsRef}>
             <div className="reveal flex items-end justify-between gap-4">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold">
