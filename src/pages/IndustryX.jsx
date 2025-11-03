@@ -29,6 +29,9 @@ export default function IndustryX() {
   // This avoids relying on public/ for PDFs and handles spaces in folder names.
   const pdfMap = useMemo(() => {
     // Eagerly import all PDFs as URLs (Vite: use query '?url')
+    // Note: when using '?url' in the glob pattern, Vite may include the query
+    // in the returned keys. We normalize by stripping any '?...' suffix so our
+    // lookup by basename (e.g., Problem_Statement_7.pdf) always matches.
     const modules = import.meta.glob(
       "../assets/Industry Problems/*.pdf?url",
       {
@@ -38,8 +41,13 @@ export default function IndustryX() {
     );
     const map = {};
     Object.entries(modules).forEach(([key, url]) => {
-      const filename = key.split("/").pop();
-      map[filename] = url;
+      const lastSegment = key.split("/").pop() || "";
+      const filename = lastSegment.split("?")[0]; // remove '?url' if present
+      if (filename) {
+        map[filename] = url;
+        // Also allow lookups by original data path to be extra-safe
+        map[`/assets/Industry Problems/${filename}`] = url;
+      }
     });
     return map;
   }, []);
@@ -497,8 +505,10 @@ Confirmation email sent to your team.`,
                         p.pdf && typeof p.pdf === "string"
                           ? p.pdf.split("/").pop()
                           : "";
+                      // Prefer resolved asset URL from map; fall back to the
+                      // original path only if we truly can't resolve it.
                       const resolvedUrl = filename
-                        ? pdfMap[filename] || p.pdf
+                        ? pdfMap[filename] || pdfMap[p.pdf] || p.pdf
                         : p.pdf;
                       return (
                         <a
