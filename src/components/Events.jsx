@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import hackImage from "../assets/images/hack_7Nov.jpg";
+import hackImage from "../assets/images/hack_7Nov.png";
 const UPCOMING = [
   {
     title: "Realtime Industrial Problems Solving Hackathon",
-    description: "fun + challenge 🚀",
-    date: "07-OCT-2k25",
+    description: "Fun + Challenge 🚀",
+    date: "07-Nov-2025",
     image: `${hackImage}`,
     isHighlighted: true,
     href: "/industryx"

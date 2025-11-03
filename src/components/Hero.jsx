@@ -1,14 +1,13 @@
 import { useEffect, useRef } from "react";
-
+import slide1 from "../assets/images/slide1.jpg";
+import slide2 from "../assets/images/slide2.jpg";
+import slide3 from "../assets/images/slide3.jpg";
 export default function Hero() {
   const slideshowRef = useRef(null);
 
   useEffect(() => {
     const imagePaths = [
-      // Data science themed images (Unsplash, royalty-free)
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1400&q=80",
+      slide1,slide2,slide3
     ];
     const container = slideshowRef.current;
     if (!container) return;

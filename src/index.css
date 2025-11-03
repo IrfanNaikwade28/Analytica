@@ -180,13 +180,16 @@
     box-shadow: 0 0 20px rgba(255, 211, 78, 0.4);
     transform: translateY(-5px) scale(1.03);
     transition: all 0.3s ease;
-  }
+    -webkit-transform: translateY(-5px) scale(1.03);
+    -moz-transform: translateY(-5px) scale(1.03);
+    -ms-transform: translateY(-5px) scale(1.03);
+    -o-transform: translateY(-5px) scale(1.03);
+}
 
   .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
-    align-items: start;
   }
 
   .individual-card {
@@ -199,10 +202,14 @@
     text-align: center;
     position: relative;
     overflow: hidden;
-    transition: transform 0.4s cubic-bezier(0.25, 0.75, 0.45, 1.1),
-      box-shadow 0.4s, background 0.4s, border-color 0.4s;
+    transition: transform 0.4s cubic-bezier(0.25, 0.75, 0.45, 1.1),      
+    box-shadow 0.4s, background 0.4s, border-color 0.4s;
     cursor: pointer;
-  }
+    -webkit-transition: transform 0.4s cubic-bezier(0.25, 0.75, 0.45, 1.1),      box-shadow 0.4s, background 0.4s, border-color 0.4s;
+    -moz-transition: transform 0.4s cubic-bezier(0.25, 0.75, 0.45, 1.1),      box-shadow 0.4s, background 0.4s, border-color 0.4s;
+    -ms-transition: transform 0.4s cubic-bezier(0.25, 0.75, 0.45, 1.1),      box-shadow 0.4s, background 0.4s, border-color 0.4s;
+    -o-transition: transform 0.4s cubic-bezier(0.25, 0.75, 0.45, 1.1),      box-shadow 0.4s, background 0.4s, border-color 0.4s;
+}
   .individual-card::before {
     content: "";
     position: absolute;

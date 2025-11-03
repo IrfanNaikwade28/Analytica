@@ -4,21 +4,48 @@ IndustryX registration app built with React + Vite, Supabase, Tailwind.
 
 ## Setup
 
-1. Install dependencies
+1) Install dependencies
 
-```bash
+```powershell
 npm install
 ```
 
-2. Create a `.env` file at the project root and add:
+2) Environment variables
 
-```bash
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
-RESEND_API_KEY=...
+Create a `.env` file (see `.env.example` for a template). Minimal SMTP (Gmail) example:
+
+```ini
+EMAIL_PROVIDER=smtp
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your@gmail.com
+SMTP_PASS=YOUR_GMAIL_APP_PASSWORD
+SMTP_FROM="Analytica DSSA <your@gmail.com>"
+
+VITE_SUPABASE_URL=...your supabase url...
+VITE_SUPABASE_ANON_KEY=...your supabase anon key...
 ```
 
-Configure the same variables in Vercel Project Settings → Environment Variables for deployments.
+Notes:
+- Gmail requires an App Password (Google Account → Security → 2‑Step Verification → App passwords).
+- If you later verify a custom domain in Resend, you can switch to `EMAIL_PROVIDER=auto` with `RESEND_API_KEY` and `RESEND_FROM=no-reply@yourdomain.com`.
+
+3) Local run with API routes
+
+Vite alone won’t serve `/api/*`. Use Vercel CLI to run the frontend and serverless functions together:
+
+```powershell
+# one-time
+npm install -g vercel
+vercel login
+vercel link
+
+# run
+vercel dev
+```
+
+Open the printed URL (usually http://localhost:3000). Submitting the registration form should send confirmation emails.
 
 ## Email Confirmation
 
@@ -34,8 +61,10 @@ Notes:
 - The subject line is: `🎉 IndustryX Registration Confirmation – Team {team_name}`
 
 Local dev:
-- Vite’s dev server doesn’t run serverless functions. Use the Vercel CLI: `vercel dev` so `/api/sendEmail` is available, and set env vars in `.env`.
-- You can use either provider locally:
-	- Resend: set `RESEND_API_KEY=...`
-	- SMTP: set `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM`, and optionally `SMTP_USER`, `SMTP_PASS`
-	- The function prefers Resend if set; otherwise it falls back to SMTP.
+- Use `vercel dev` so `/api/sendEmail` works.
+- Providers:
+  - SMTP (recommended with Gmail): set `EMAIL_PROVIDER=smtp` and SMTP_* vars.
+  - Resend: set `RESEND_API_KEY` and `RESEND_FROM` (requires verified domain to email anyone).
+
+Deploy on Vercel:
+- Add the same env vars in Project Settings → Environment Variables (Preview + Production) and redeploy.

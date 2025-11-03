@@ -6,11 +6,16 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.RESEND_API_KEY
+  const RESEND_FROM = process.env.RESEND_FROM || 'onboarding@resend.dev'
+  const EMAIL_PROVIDER = (process.env.EMAIL_PROVIDER || 'auto').toLowerCase() // 'auto' | 'resend' | 'smtp'
+  const EMAIL_BCC = process.env.EMAIL_BCC
   const SMTP_HOST = process.env.SMTP_HOST
   const SMTP_PORT = Number(process.env.SMTP_PORT || 0)
   const SMTP_USER = process.env.SMTP_USER
   const SMTP_PASS = process.env.SMTP_PASS
   const SMTP_FROM = process.env.SMTP_FROM
+  // If SMTP_FROM isn't explicitly set, default to the authenticated user with a nice display name
+  const SMTP_FROM_EFF = SMTP_FROM || (SMTP_USER ? `Analytica DSSA <${SMTP_USER}>` : undefined)
 
   try {
     const {
@@ -23,6 +28,7 @@ export default async function handler(req, res) {
       problem1_title,
       problem2_title,
       problem3_title,
+      recipients,
     } = req.body || {}
 
     if (!leader_email || !team_name || !leader_name) {
@@ -31,6 +37,11 @@ export default async function handler(req, res) {
     }
 
     const subject = `🎉 IndustryX Registration Confirmation – Team ${team_name}`
+    const toList = Array.isArray(recipients) && recipients.length
+      ? recipients.filter(Boolean)
+      : [leader_email]
+
+    const text = `Hi ${leader_name},\n\nYour team "${team_name}" has been successfully registered for the IndustryX Event (DSSA).\n\nTeam\n- Leader: ${leader_name} (${leader_email})\n- Phone: ${leader_phone || '-'}\n- Division: ${division || '-'}  Year: ${year_of_study || '-'}\n\nProblem Statements\n1) ${problem1_title || '-'}\n2) ${problem2_title || '-'}\n3) ${problem3_title || '-'}\n\nThank you for registering! More event details will follow soon.\n\n— Analytica DSSA`
 
     const html = `<!DOCTYPE html>
 <html>
@@ -82,8 +93,12 @@ export default async function handler(req, res) {
   </body>
 </html>`
 
-    // Prefer Resend when configured, else fall back to SMTP (for local/dev)
-    if (apiKey) {
+    // Decide provider
+    const tryResendFirst = EMAIL_PROVIDER === 'resend' || (EMAIL_PROVIDER === 'auto' && apiKey)
+  const trySmtpFirst = EMAIL_PROVIDER === 'smtp' && SMTP_HOST && SMTP_PORT && SMTP_FROM_EFF
+
+    // Prefer Resend when configured (or forced), else SMTP
+    if (tryResendFirst) {
       const resp = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -91,17 +106,55 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Analytica DSSA <onboarding@resend.dev>',
-          to: [leader_email],
+          from: `Analytica DSSA <${RESEND_FROM}>`,
+          to: toList,
+          bcc: EMAIL_BCC ? [EMAIL_BCC] : undefined,
+          reply_to: leader_email,
           subject,
           html,
+          text,
         }),
       })
 
       if (!resp.ok) {
-        const text = await resp.text().catch(() => '')
-        console.error('Resend error:', resp.status, text)
-        res.status(502).json({ error: 'Failed to send email via Resend' })
+        // Try to read JSON response for better diagnostics
+        let payload
+        try {
+          payload = await resp.clone().json()
+        } catch {
+          try { payload = { raw: await resp.text() } } catch { payload = {} }
+        }
+        console.error('Resend error:', resp.status, payload)
+
+        // If Resend blocks test-mode addresses (403 validation_error) and SMTP is configured, fall back automatically
+        const isValidation403 = resp.status === 403 && (payload?.name === 'validation_error' || payload?.statusCode === 403)
+        if ((EMAIL_PROVIDER === 'auto' || EMAIL_PROVIDER === 'smtp') && isValidation403 && SMTP_HOST && SMTP_PORT && SMTP_FROM_EFF) {
+          try {
+            const nodemailer = (await import('nodemailer')).default
+            const transporter = nodemailer.createTransport({
+              host: SMTP_HOST,
+              port: SMTP_PORT,
+              secure: SMTP_PORT === 465,
+              auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
+            })
+            const info = await transporter.sendMail({
+              from: SMTP_FROM_EFF,
+              to: toList,
+              bcc: EMAIL_BCC,
+              replyTo: leader_email,
+              subject,
+              html,
+              text,
+            })
+            res.status(200).json({ ok: true, id: info?.messageId, provider: 'smtp', fallbackFrom: 'resend-403' })
+            return
+          } catch (smtpErr) {
+            console.error('SMTP fallback failed:', smtpErr)
+            // continue to return the original resend error below
+          }
+        }
+
+        res.status(502).json({ error: 'Failed to send email via Resend', details: payload })
         return
       }
 
@@ -110,7 +163,7 @@ export default async function handler(req, res) {
       return
     }
 
-    if (SMTP_HOST && SMTP_PORT && SMTP_FROM) {
+    if (trySmtpFirst || (SMTP_HOST && SMTP_PORT && SMTP_FROM_EFF && !apiKey)) {
       const nodemailer = (await import('nodemailer')).default
       const transporter = nodemailer.createTransport({
         host: SMTP_HOST,
@@ -120,10 +173,13 @@ export default async function handler(req, res) {
       })
 
       const info = await transporter.sendMail({
-        from: SMTP_FROM,
-        to: leader_email,
+        from: SMTP_FROM_EFF,
+        to: toList,
+        bcc: EMAIL_BCC,
+        replyTo: leader_email,
         subject,
         html,
+        text,
       })
       res.status(200).json({ ok: true, id: info?.messageId, provider: 'smtp' })
       return

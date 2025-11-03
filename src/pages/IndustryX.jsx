@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-import heroImage from "../assets/images/hack_7Nov.jpg";
+import heroImage from "../assets/images/hack_7Nov.png";
 import problems from "../assets/Data/problemStatements.json";
 import { useForm } from "react-hook-form";
 import { supabase } from "../lib/supabaseClient.js";
@@ -287,6 +287,14 @@ export default function IndustryX() {
       }
       // Fire-and-forget email; don't block UI (works in prod and with vercel dev, falls back to SMTP if configured)
       setTimeout(() => {
+        const recipients = [
+          leaderEmail,
+          data.member1_email,
+          data.member2_email,
+          data.member3_email,
+          data.member4_email,
+        ].filter(Boolean);
+        const uniqueRecipients = Array.from(new Set(recipients));
         sendRegistrationConfirmationEmail({
           leader_name: data.leaderName,
           leader_email: leaderEmail,
@@ -297,15 +305,16 @@ export default function IndustryX() {
           problem1_title: data.problem1_title,
           problem2_title: data.problem2_title,
           problem3_title: data.problem3_title,
+          recipients: uniqueRecipients,
         });
       }, 0);
 
-      pushToast({
-        type: "success",
-        title: `✅ Registration Successful!
+  pushToast({
+    type: "success",
+    title: `✅ Registration Successful!
 Your team is all set for IndustryX 2025.
-Confirmation email sent to your leader.`,
-      });
+Confirmation email sent to your team.`,
+  });
       setTimeout(
         () =>
           registerRef.current?.scrollIntoView({
@@ -338,7 +347,7 @@ Confirmation email sent to your leader.`,
 
   return (
     <div className="selection:bg-accent/30 selection:text-white">
-      <Header />
+      <Header/>
       <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start min-h-[calc(100vh-6rem)] w-full pt-6">
