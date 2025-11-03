@@ -28,27 +28,29 @@ export default function IndustryX() {
   // Map PDFs from src/assets to served URLs so links work in Vite dev/build
   // This avoids relying on public/ for PDFs and handles spaces in folder names.
   const pdfMap = useMemo(() => {
-    // Eagerly import all PDFs as URLs (Vite: use query '?url')
-    // Note: when using '?url' in the glob pattern, Vite may include the query
-    // in the returned keys. We normalize by stripping any '?...' suffix so our
-    // lookup by basename (e.g., Problem_Statement_7.pdf) always matches.
-    const modules = import.meta.glob(
+    // Eagerly import all PDFs as URLs. Use both with and without '?url' to be
+    // maximally compatible across Vite versions/configs.
+    const modulesA = import.meta.glob(
       "../assets/Industry Problems/*.pdf?url",
-      {
-        eager: true,
-        import: "default",
-      }
+      { eager: true, import: "default" }
     );
+    const modulesB = import.meta.glob(
+      "../assets/Industry Problems/*.pdf",
+      { eager: true, import: "default" }
+    );
+    const modules = { ...modulesA, ...modulesB };
+
     const map = {};
     Object.entries(modules).forEach(([key, url]) => {
       const lastSegment = key.split("/").pop() || "";
-      const filename = lastSegment.split("?")[0]; // remove '?url' if present
+      const filename = lastSegment.split("?")[0]; // strip any query
       if (filename) {
         map[filename] = url;
         // Also allow lookups by original data path to be extra-safe
         map[`/assets/Industry Problems/${filename}`] = url;
       }
     });
+    // console.debug("pdfMap keys:", Object.keys(map));
     return map;
   }, []);
 
@@ -505,11 +507,15 @@ Confirmation email sent to your team.`,
                         p.pdf && typeof p.pdf === "string"
                           ? p.pdf.split("/").pop()
                           : "";
+                      // Build a deterministic filename by problem id as primary key
+                      const byId = `Problem_Statement_${p.id}.pdf`;
                       // Prefer resolved asset URL from map; fall back to the
                       // original path only if we truly can't resolve it.
-                      const resolvedUrl = filename
-                        ? pdfMap[filename] || pdfMap[p.pdf] || p.pdf
-                        : p.pdf;
+                      const resolvedUrl =
+                        pdfMap[byId] ||
+                        (filename ? pdfMap[filename] : undefined) ||
+                        pdfMap[p.pdf] ||
+                        p.pdf;
                       return (
                         <a
                           href={resolvedUrl}
