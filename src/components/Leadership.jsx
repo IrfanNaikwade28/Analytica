@@ -5,7 +5,7 @@ import RAK from "../assets/images/team_pic/RAK.png";
 const MEMBERS = [
   { name: "Mr.G.V. Patil", role: "H.O.D", department: "Department of Data Science", icon: "fa-solid fa-crown", photo: HOD },
   { name: "Mrs.T.V. Deokar", role: "Faculty Coordinator", department: "Department of Data Science", icon: "fa-solid fa-user-tie", photo: TVD },
-  { name: "Mrs.R. A. Kothiwale", role: "Faculty Coordinator", department: "Department of Data Science", icon: "fa-solid fa-file-pen", photo: RAK }
+  { name: "Mrs.R. A. Kothiwale", role: "Faculty Coordinator", department: "Department of Data Science", icon: "fa-solid fa-user-tie", photo: RAK }
 ];
 
 function initials(name){
@@ -28,9 +28,9 @@ export default function Leadership(){
             <span className="text-sm uppercase tracking-widest text-white/60">Meet Our Leadership</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 uppercase">
-            <span className="text-gradient uppercase">Analytica</span> Team
+            <span className="text-gradient uppercase">Analytica</span> FACULTY TEAM
           </h2>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">The passionate individuals who make Analytica a thriving community of innovation and learning.</p>
+          <p className="text-white/70 text-lg max-w-2xl mx-auto">Passionate mentors shaping the future of Data Science through guidance, innovation, and collaboration.</p>
         </div>
         <div className="team-grid" id="team-container">
           {MEMBERS.map((m, idx)=> (

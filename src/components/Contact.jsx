@@ -11,21 +11,21 @@ export default function Contact(){
               <div className="w-11 h-11 rounded-xl glass grid place-items-center"><i className="fa-solid fa-location-dot text-highlight"></i></div>
               <div>
                 <h4 className="font-semibold">Address</h4>
-                <p className="text-white/70 max-w-full">Analytica Data Science Student Association (DSSA)</p>
+                <p className="text-white/70 max-w-full">Analytica - Department of Data Science, DYPCET</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
               <div className="w-11 h-11 rounded-xl glass grid place-items-center"><i className="fa-solid fa-envelope text-highlight"></i></div>
               <div>
                 <h4 className="font-semibold">Email</h4>
-                <p className="text-white/70 max-w-full">analytica.dssa@example.com</p>
+                <p className="text-white/70 max-w-full">analytica.dssa@gmail.com</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-11 h-11 rounded-xl glass grid place-items-center"><i className="fa-solid fa-phone text-highlight"></i></div>
+              <div className="w-11 h-11 rounded-xl glass grid place-items-center"><i className="fa-solid fa-user-group text-highlight"></i></div>
               <div>
-                <h4 className="font-semibold">Phone</h4>
-                <p className="text-white/70 max-w-full">+91 1234567890</p>
+                <h4 className="font-semibold">Reach Out to Us</h4>
+                <p className="text-white/70 max-w-full">Have inquiries or collaboration ideas? Our faculty would be glad to connect with you.</p>
               </div>
             </div>
           </div>

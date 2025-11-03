@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import hackImage from "../assets/images/hack_7Nov.png";
 const UPCOMING = [
   {
-    title: "Realtime Industrial Problems Solving Hackathon",
-    description: "Fun + Challenge 🚀",
-    date: "07-Nov-2025",
+    title: "Realtime Industrial Problems Solving Competition",
+    description: "Code for the Real World.💻🌍",
+    date: "11-Nov-2025",
     image: `${hackImage}`,
     isHighlighted: true,
     href: "/industryx"
