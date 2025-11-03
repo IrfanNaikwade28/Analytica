@@ -18,6 +18,14 @@ export default async function handler(req, res) {
   const SMTP_FROM_EFF = SMTP_FROM || (SMTP_USER ? `Analytica DSSA <${SMTP_USER}>` : undefined)
 
   try {
+    // Non-sensitive configuration snapshot to help diagnose provider selection in logs
+    console.info('[sendEmail] config', {
+      providerMode: EMAIL_PROVIDER,
+      hasResendKey: Boolean(apiKey),
+      hasSmtp:
+        Boolean(SMTP_HOST) && Boolean(SMTP_PORT) && Boolean(SMTP_FROM_EFF),
+    })
+
     const {
       leader_name,
       leader_email,
