@@ -10,6 +10,7 @@ import EventsPage from './pages/EventsPage.jsx'
 import BenefitsPage from './pages/BenefitsPage.jsx'
 import JoinPage from './pages/JoinPage.jsx'
 import ContactPage from './pages/ContactPage.jsx'
+import IndustryXResult from './pages/IndustryXResult.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -25,12 +26,13 @@ createRoot(document.getElementById('root')).render(
         <Route path="/join" element={<JoinPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/industryx" element={<IndustryX />} />
+        <Route path="/industryx-result" element={<IndustryXResult />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
 )
 
-function ScrollToTop(){
+export function ScrollToTop(){
   const location = useLocation()
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })

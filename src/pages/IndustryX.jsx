@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react"; // removed useState (registration closed)
+import { useEffect,useMemo, useRef } from "react"; // removed useState & useMemo (registration closed)
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import heroImage from "../assets/images/hack_7Nov.png";
@@ -7,7 +7,7 @@ import problems from "../assets/Data/problemStatements.json";
 // import { useForm } from "react-hook-form";
 // import { supabase } from "../lib/supabaseClient.js";
 // import { sendRegistrationConfirmationEmail } from "../lib/sendEmail.js";
-import rules from "../assets/Data/Rules_and_Regulations.pdf";
+// import rules from "../assets/Data/Rules_and_Regulations.pdf"; // not used when only showing results button
 
 function Stat({ icon, label, value }) {
   return (
@@ -22,7 +22,7 @@ function Stat({ icon, label, value }) {
 
 export default function IndustryX() {
   const registerRef = useRef(null);
-  const problemsRef = useRef(null);
+  const problemsRef = useRef(null); // not needed with results-only CTA
   // success UI handled via toasts only
   // const [toasts, setToasts] = useState([]); // toast system disabled with registration
   // const [loading, setLoading] = useState(false); // registration closed
@@ -70,9 +70,9 @@ export default function IndustryX() {
 
 
 
-  const onProblemsClick = () => {
-    problemsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  // const onProblemsClick = () => {
+  //   problemsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  // };
 
   // Ensure we land at the top (hero) when navigating to /industryx
   useEffect(() => {
@@ -203,19 +203,11 @@ export default function IndustryX() {
                 />
               </div>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={onProblemsClick}
-                  className="btn-magnetic w-full sm:w-auto px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition text-sm sm:text-base"
-                >
-                  Problem Statements
-                </button>
                 <a
-                  href={rules}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl glass hover:scale-105 transition text-sm sm:text-base text-center"
+                  href="/industryx-result"
+                  className="btn-magnetic w-full sm:w-auto px-6 py-3 rounded-xl bg-highlight text-ink font-bold hover:scale-105 transition text-sm sm:text-base text-center"
                 >
-                  Rules and Regulation
+                  View Results
                 </a>
               </div>
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
