@@ -1,48 +1,17 @@
-import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import hackImage from "../assets/images/hack_7Nov.png";
-const UPCOMING = [
+const EVENTS = [
   {
     title: "Realtime Industrial Problems Solving Competition",
-    description: "Code for the Real World.💻🌍",
+    description: "Code for the Real World",
     date: "11-Nov-2025",
     image: `${hackImage}`,
-    isHighlighted: true,
+    badge: "Done",
+    badgeColor: "bg-green-500",
     href: "/industryx"
   },
 ];
-
-const PAST = [
-  {
-    id: 'Technoutsav-2024',
-    title: "Technoutsav 2K24",
-    description: "A National level event",
-    date: "Aug 20, 2024",
-    coverImage: "https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1400&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
-    ],
-    fullDescription: "Techno Utsav is a thrilling national-level technical competition designed to challenge intellect, speed, and innovation.",
-    highlights: ["National-Level Technical Event","Aptitude Quest – Round 1","Tech Challenge – Round 2"]
-  },
-];
-
 export default function Events(){
-  const [modalEvent, setModalEvent] = useState(null);
-  const [slide, setSlide] = useState(0);
-  const slidesTrackRef = useRef(null);
-
-  useEffect(()=>{
-    if(modalEvent){ setSlide(0); }
-  },[modalEvent]);
-
-  useEffect(()=>{
-    if(slidesTrackRef.current){
-      slidesTrackRef.current.style.transform = `translateX(-${slide*100}%)`;
-    }
-  },[slide]);
 
   return (
     <section id="events" className="pt-24 pb-24 px-4 sm:px-6 lg:px-8">
@@ -56,40 +25,20 @@ export default function Events(){
         </div>
 
         <div className="mt-10 max-w-full">
-          <h3 className="text-lg sm:text-xl font-semibold text-white/80 mb-4 max-w-full">Upcoming</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-full">
-            {UPCOMING.map((event,idx)=> (
-              <div key={event.title} className={`relative overflow-hidden rounded-2xl glass card-3d reveal upcoming-card ${event.isHighlighted? 'ring-2 ring-highlight/60 shadow-glow':''}`} style={{transitionDelay: `${idx*80}ms`}}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-full">
+            {EVENTS.map((event,idx)=> (
+              <div key={event.title} className="relative overflow-hidden rounded-3xl glass card-3d reveal border-2 border-gradient shadow-[0_0_30px_rgba(255,159,252,0.3)]" style={{transitionDelay: `${idx*80}ms`, borderImage: 'linear-gradient(135deg, rgba(255,159,252,0.6), rgba(57,46,78,0.6)) 1'}}>
                 <Link to={event.href}>
-                <div className="relative">
-                  <img className="w-full h-52 sm:h-56 md:h-60 object-cover" src={event.image} alt={event.title} />
-                  {event.isHighlighted && (<div className="absolute top-4 left-4 px-3 py-1 text-xs rounded-full bg-highlight text-ink font-bold">Next Event</div>)}
-                </div>
-                
+                  <div className="relative">
+                    <img className="w-full h-52 sm:h-56 md:h-60 object-cover" src={event.image} alt={event.title} />
+                    {event.badge && (<div className={`absolute top-4 left-4 px-4 py-1.5 text-xs rounded-full ${event.badgeColor} text-white font-bold shadow-lg`}>{event.badge}</div>)}
+                  </div>
                   <div className="p-6">
                     <h4 className="text-xl font-semibold">{event.title}</h4>
                     <p className="text-white/70 mt-1">{event.description}</p>
                     <div className="mt-3 text-white/60 text-sm"><i className="fa-regular fa-calendar-days mr-2"></i>{event.date}</div>
                   </div>
                 </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-12 max-w-full">
-          <h3 className="text-lg sm:text-xl font-semibold text-white/80 mb-4 max-w-full">Past Highlights</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-full">
-            {PAST.map((e,idx)=> (
-              <div key={e.id} className="overflow-hidden rounded-2xl glass card-3d reveal past-card" style={{transitionDelay: `${idx*80}ms`}} onClick={()=>setModalEvent(e)}>
-                <div className="relative group">
-                  <img className="w-full h-40 sm:h-48 object-cover transition-transform duration-500 group-hover:scale-105" src={e.coverImage} alt={e.title} />
-                </div>
-                <div className="p-5">
-                  <h4 className="font-semibold">{e.title}</h4>
-                  <p className="text-white/70 text-sm mt-1">{e.description}</p>
-                  <div className="mt-2 text-white/60 text-xs"><i className="fa-regular fa-calendar mr-2"></i>{e.date}</div>
-                </div>
               </div>
             ))}
           </div>
@@ -132,45 +81,6 @@ export default function Events(){
             </div>
           </div>
         </section>
-      </div>
-
-      {/* Event Modal */}
-      <div id="event-modal" className={`event-modal ${modalEvent? 'active':''} ${modalEvent? '':'hidden'}`}>
-        <div className="modal-overlay" onClick={()=>setModalEvent(null)} />
-        <div className="modal-card">
-          <button className="modal-close" onClick={()=>setModalEvent(null)}><i className="fa-solid fa-times" /></button>
-          {modalEvent && (
-            <div className="modal-content">
-              <div className="slideshow-container">
-                <div className="slideshow-wrapper">
-                  <div className="slides-track" ref={slidesTrackRef}>
-                    {modalEvent.gallery.map((src,i)=> (
-                      <div className="slide" key={src}><img src={src} alt={`Event image ${i+1}`} /></div>
-                    ))}
-                  </div>
-                </div>
-                <button className="slide-nav slide-prev" onClick={()=>setSlide(s=>Math.max(0,s-1))} disabled={slide===0}><i className="fa-solid fa-chevron-left" /></button>
-                <button className="slide-nav slide-next" onClick={()=>setSlide(s=>Math.min((modalEvent?.gallery?.length||1)-1, s+1))} disabled={slide===(modalEvent?.gallery?.length||1)-1}><i className="fa-solid fa-chevron-right" /></button>
-                <div className="slide-indicators">
-                  {modalEvent.gallery.map((_,i)=> (
-                    <button key={i} className={`slide-indicator ${i===slide? 'active':''}`} onClick={()=>setSlide(i)} />
-                  ))}
-                </div>
-              </div>
-              <div className="modal-details">
-                <h2 className="modal-title">{modalEvent.title}</h2>
-                <div className="modal-date"><i className="fa-regular fa-calendar"/> {modalEvent.date}</div>
-                <div className="modal-description">{modalEvent.fullDescription}</div>
-                <div className="modal-highlights">
-                  <h4>Event Highlights:</h4>
-                  <ul>
-                    {modalEvent.highlights.map(h=> (<li key={h}>{h}</li>))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </section>
   );
