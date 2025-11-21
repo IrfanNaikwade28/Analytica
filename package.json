@@ -11,11 +11,14 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.78.0",
+    "face-api.js": "^0.22.2",
     "nodemailer": "^6.9.14",
+    "postprocessing": "^6.38.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.66.0",
-    "react-router-dom": "^7.9.5"
+    "react-router-dom": "^7.9.5",
+    "three": "^0.181.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
