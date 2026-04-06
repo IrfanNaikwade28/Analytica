@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import gamecraftHero from "../assets/images/Gamecraft/gamecraft1.png";
-import gamecraft2 from "../assets/images/Gamecraft/gamecraft2.jpg";
-import gamecraft3 from "../assets/images/Gamecraft/gamecraft3.png";
 
 const OBJECTIVES = [
   {
@@ -199,22 +197,6 @@ export default function GameCraft() {
                     />
                   </div>
 
-                  {/* Floating Small Images */}
-                  <div className="hidden lg:block absolute -bottom-6 -left-6 w-48 rounded-xl overflow-hidden glass border border-white/10 shadow-[0_8px_24px_rgba(177,59,255,0.2)] animate-float" style={{ animationDuration: '4s' }}>
-                    <img
-                      src={gamecraft2}
-                      alt="Game Development"
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
-
-                  <div className="hidden lg:block absolute -top-6 -right-6 w-40 rounded-xl overflow-hidden glass border border-white/10 shadow-[0_8px_24px_rgba(255,211,78,0.2)] animate-float" style={{ animationDuration: '5s', animationDelay: '1s' }}>
-                    <img
-                      src={gamecraft3}
-                      alt="AI Assistance"
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
                 </div>
               </div>
             </div>

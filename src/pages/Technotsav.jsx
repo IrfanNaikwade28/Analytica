@@ -2,15 +2,16 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-import hackImage from "../assets/images/hack_7Nov.png";
 import gamecraftImage from "../assets/images/Gamecraft/gamecraft1.png";
+import biDashBattleImage from "../assets/images/bi_dash_battle/image2.jpg";
+import esportsImage from "../assets/images/esports/hero.png";
 
 const EVENTS = [
   {
-    title: "Power BI Competition",
-    category: "Data Analytics",
-    description: "Transform data into powerful visual insights and compete with the best analysts",
-    image: hackImage,
+    title: "BI DashBattle 2K26",
+    category: "Data Analytics Challenge",
+    description: "Turn raw data into powerful insights through interactive Power BI dashboards",
+    image: biDashBattleImage,
     href: "/technotsav/powerbi",
     icon: "fa-solid fa-chart-line"
   },
@@ -23,10 +24,10 @@ const EVENTS = [
     icon: "fa-solid fa-gamepad"
   },
   {
-    title: "Esports Tournament",
-    category: "Competitive Gaming",
-    description: "Compete in popular gaming titles and prove your skills on the virtual battlefield",
-    image: hackImage,
+    title: "Esports Arena",
+    category: "Esports Tournament",
+    description: "Battle in Free Fire and eFootball tournaments. Compete, dominate, and rise to the top",
+    image: esportsImage,
     href: "/technotsav/esports",
     icon: "fa-solid fa-trophy"
   },
@@ -145,7 +146,7 @@ export default function Technotsav() {
               className="flex flex-wrap items-center justify-center gap-3 mb-10 animate-fadeUp"
               style={{ animationDelay: '0.4s', animationFillMode: 'both' }}
             >
-              {['Hackathon', 'Esports', 'Analytics'].map((tag, idx) => (
+              {['Game dev', 'Esports', 'Analytics'].map((tag, idx) => (
                 <span
                   key={tag}
                   className="px-4 py-2 text-xs font-semibold text-white/70 rounded-lg glass border border-white/10 hover:border-accent/30 transition-all duration-300 hover:scale-105 animate-float"
@@ -331,8 +332,8 @@ export default function Technotsav() {
                 {/* Image Side */}
                 <div className="h-64 lg:h-96 overflow-hidden">
                   <img
-                    src={hackImage}
-                    alt="Featured Event"
+                    src={gamecraftImage}
+                    alt="GameCraft Featured Event"
                     className="w-full h-full object-cover"
                   />
                 </div>
