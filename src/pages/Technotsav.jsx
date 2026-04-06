@@ -347,8 +347,7 @@ export default function Technotsav() {
                     GameCraft <span className="text-gradient">2026</span>
                   </h2>
                   <p className="text-white/70 text-lg mb-6 leading-relaxed">
-                    Join our flagship game development competition. Build innovative games in 48 hours, learn from industry experts, and compete for amazing prizes.
-                  </p>
+                  GameCraft is an innovative game development competition exploring the intersection of creativity and AI.</p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link
                       to="/technotsav/gamecraft"
@@ -359,12 +358,6 @@ export default function Technotsav() {
                         <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                       </span>
                     </Link>
-                    <a
-                      href="/contact"
-                      className="px-6 py-3 rounded-xl glass border border-white/10 hover:border-accent/50 font-semibold hover:scale-[1.02] transition-all duration-300 text-center"
-                    >
-                      Register Interest
-                    </a>
                   </div>
                 </div>
               </div>

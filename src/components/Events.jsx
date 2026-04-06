@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import hackImage from "../assets/images/hack_7Nov.png";
+import technotsav from "../assets/images/technotsav.png";
+
 const EVENTS = [
   {
     title: "Realtime Industrial Problems Solving Competition",
@@ -13,8 +15,8 @@ const EVENTS = [
   {
     title: "Technotsav",
     description: "Technical Festival by Analytica",
-    date: "Coming Soon",
-    image: `${hackImage}`,
+    date: "15-April-2026",
+    image: `${technotsav}`,
     badge: "Upcoming",
     badgeColor: "bg-accent",
     href: "/technotsav"
