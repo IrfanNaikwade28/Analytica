@@ -11,6 +11,10 @@ import BenefitsPage from './pages/BenefitsPage.jsx'
 import JoinPage from './pages/JoinPage.jsx'
 import ContactPage from './pages/ContactPage.jsx'
 import IndustryXResult from './pages/IndustryXResult.jsx'
+import Technotsav from './pages/Technotsav.jsx'
+import PowerBI from './pages/PowerBI.jsx'
+import GameCraft from './pages/GameCraft.jsx'
+import Esports from './pages/Esports.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -27,6 +31,10 @@ createRoot(document.getElementById('root')).render(
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/industryx" element={<IndustryX />} />
         <Route path="/industryx-result" element={<IndustryXResult />} />
+        <Route path="/technotsav" element={<Technotsav />} />
+        <Route path="/technotsav/powerbi" element={<PowerBI />} />
+        <Route path="/technotsav/gamecraft" element={<GameCraft />} />
+        <Route path="/technotsav/esports" element={<Esports />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

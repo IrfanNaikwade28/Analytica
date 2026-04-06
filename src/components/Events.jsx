@@ -10,6 +10,15 @@ const EVENTS = [
     badgeColor: "bg-green-500",
     href: "/industryx"
   },
+  {
+    title: "Technotsav",
+    description: "Technical Festival by Analytica",
+    date: "Coming Soon",
+    image: `${hackImage}`,
+    badge: "Upcoming",
+    badgeColor: "bg-accent",
+    href: "/technotsav"
+  },
 ];
 export default function Events(){
 
