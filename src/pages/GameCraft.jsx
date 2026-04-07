@@ -77,10 +77,10 @@ const RULES = {
     "Games must be built from scratch during the 3-hour event"
   ],
   aiUsage: [
-    "AI can be used for code assistance, debugging, and logic suggestions",
-    "AI should assist your development, not automate entire features",
-    "Teams must be able to explain all AI-generated code",
-    "Excessive or unethical AI reliance will result in penalties"
+    "Only AI tools provided by organizers are allowed",
+    "Cannot use personal AI tools (ChatGPT, Claude, Copilot, etc.)",
+    "AI should assist development, not automate entire features",
+    "Teams must understand and explain all AI-generated code"
   ],
   submission: [
     "Submit game build, playable demo, and brief documentation",
@@ -330,65 +330,6 @@ export default function GameCraft() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* AI Usage Policy */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto max-w-4xl">
-            <div className="reveal text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                AI Usage <span className="text-gradient">Policy</span>
-              </h2>
-              <p className="text-white/70 text-lg">
-                Clear guidelines for ethical and effective AI use
-              </p>
-            </div>
-
-            <div className="reveal glass rounded-2xl p-8 border border-white/10">
-              <div className="space-y-8">
-                {/* Allowed Usage */}
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center">
-                      <i className="fa-solid fa-check text-green-400"></i>
-                    </div>
-                    <h3 className="text-xl font-bold">Allowed AI Usage</h3>
-                  </div>
-                  <ul className="space-y-2 ml-13">
-                    <li className="flex items-start gap-3 text-white/70">
-                      <i className="fa-solid fa-circle text-[6px] mt-2 text-green-400"></i>
-                      <span>Code assistance and suggestions for specific functions</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-white/70">
-                      <i className="fa-solid fa-circle text-[6px] mt-2 text-green-400"></i>
-                      <span>Debugging help and error resolution</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-white/70">
-                      <i className="fa-solid fa-circle text-[6px] mt-2 text-green-400"></i>
-                      <span>Logic suggestions and algorithm optimization</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-white/70">
-                      <i className="fa-solid fa-circle text-[6px] mt-2 text-green-400"></i>
-                      <span>Documentation and code explanation generation</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Key Rule */}
-                <div className="p-6 rounded-xl bg-highlight/10 border border-highlight/30">
-                  <div className="flex items-start gap-4">
-                    <i className="fa-solid fa-exclamation-triangle text-highlight text-2xl mt-1"></i>
-                    <div>
-                      <h4 className="text-lg font-bold mb-2 text-highlight">Golden Rule</h4>
-                      <p className="text-white/80 leading-relaxed">
-                        AI should <strong>assist</strong> your development process, not <strong>automate</strong> it. You must understand, modify, and take ownership of all code in your submission. Teams must be able to explain their implementation during judging.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
