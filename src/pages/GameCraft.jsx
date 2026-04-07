@@ -72,6 +72,8 @@ const RULES = {
   development: [
     "Problem statement will be provided at the event start time",
     "College lab PCs will be provided to each team",
+    "Any tech stack allowed (HTML/CSS/JS, Unity, Godot, etc.)",
+    "Games must be playable and participants must understand their code",
     "No pre-built assets, sprites, sounds, or templates allowed",
     "Mobile phones are not permitted during development",
     "Games must be built from scratch during the 3-hour event"
