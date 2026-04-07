@@ -67,12 +67,14 @@ const RULES = {
   participation: [
     "Teams must consist of 2-3 members",
     "All team members must be registered before the deadline",
-    "Teams cannot change members after registration closes"
+    "Event Date: April 15, 2026 | Start Time: 10:00 AM"
   ],
   development: [
-    "Games must be built during the competition period",
-    "Pre-made assets (sprites, sounds) are allowed with proper attribution",
-    "Games must be playable and demonstrable at submission time"
+    "Problem statement will be provided at the event start time",
+    "College lab PCs will be provided to each team",
+    "No pre-built assets, sprites, sounds, or templates allowed",
+    "Mobile phones are not permitted during development",
+    "Games must be built from scratch during the 3-hour event"
   ],
   aiUsage: [
     "AI can be used for code assistance, debugging, and logic suggestions",
@@ -212,15 +214,51 @@ export default function GameCraft() {
               </h2>
               <div className="text-white/70 text-lg leading-relaxed">
                 <p>
-                  GameCraft is an innovative game development competition exploring the intersection of creativity and AI. Participants design and build playable games using AI tools strategically as assistants for code generation, debugging, and problem-solving. This challenge emphasizes practical AI application while maintaining human creativity at the core. Compete through multiple rounds and demonstrate how AI enhances rather than replaces the development process.
+                  GameCraft is an innovative 3-hour game development competition exploring the intersection of creativity and AI. Participants receive a problem statement at the event start and must design and build playable games from scratch using AI tools strategically. All development happens on provided college lab PCs with no pre-built assets allowed. This challenge emphasizes practical AI application while maintaining human creativity at the core.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Event Details - Date, Time, Duration */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto max-w-5xl">
+            <div className="reveal glass rounded-2xl p-8 sm:p-10 border border-white/10">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">
+                Event <span className="text-gradient">Details</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 rounded-xl bg-white/[0.02] border border-white/5">
+                  <i className="fa-solid fa-calendar-day text-3xl text-highlight mb-3"></i>
+                  <h3 className="text-sm font-semibold text-white/60 mb-2">Event Date</h3>
+                  <p className="text-xl font-bold">April 15, 2026</p>
+                </div>
+                <div className="text-center p-6 rounded-xl bg-white/[0.02] border border-white/5">
+                  <i className="fa-solid fa-clock text-3xl text-highlight mb-3"></i>
+                  <h3 className="text-sm font-semibold text-white/60 mb-2">Start Time</h3>
+                  <p className="text-xl font-bold">10:00 AM</p>
+                </div>
+                <div className="text-center p-6 rounded-xl bg-white/[0.02] border border-white/5">
+                  <i className="fa-solid fa-hourglass-half text-3xl text-highlight mb-3"></i>
+                  <h3 className="text-sm font-semibold text-white/60 mb-2">Duration</h3>
+                  <p className="text-xl font-bold">3 Hours</p>
+                </div>
+              </div>
+              <div className="mt-6 p-4 rounded-xl bg-accent/10 border border-accent/30">
+                <div className="flex items-start gap-3">
+                  <i className="fa-solid fa-info-circle text-highlight mt-1"></i>
+                  <p className="text-white/80 text-sm">
+                    <strong>Important:</strong> Problem statement will be revealed at the event start time. All development must be done on college lab PCs provided to each team.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Objectives Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">{/* Reduced top padding since previous section has padding */}
           <div className="container mx-auto max-w-6xl">
             <div className="reveal text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
