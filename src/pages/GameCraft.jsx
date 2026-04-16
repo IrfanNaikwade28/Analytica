@@ -1,495 +1,164 @@
 import { useEffect } from "react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-import gamecraftHero from "../assets/images/Gamecraft/gamecraft1.png";
 
-const OBJECTIVES = [
+const WINNERS = [
   {
-    icon: "fa-solid fa-microchip",
-    title: "Practical AI Application",
-    description: "Apply AI tools effectively in real-world game development scenarios"
+    position: "1st Place",
+    badge: "Winner",
+    team: "Pixel Pioneers",
+    leader: "Aarav Patil",
+    glow: "from-yellow-400/35 to-amber-300/15",
+    border: "border-yellow-300/50",
   },
   {
-    icon: "fa-solid fa-palette",
-    title: "Creative Game Design",
-    description: "Design engaging gameplay mechanics and innovative game concepts"
+    position: "2nd Place",
+    badge: "Runner-up",
+    team: "Neural Ninjas",
+    leader: "Siya Kulkarni",
+    glow: "from-purple-400/35 to-fuchsia-300/15",
+    border: "border-purple-300/45",
   },
   {
-    icon: "fa-solid fa-brain",
-    title: "Smart AI Usage",
-    description: "Demonstrate strategic use of AI as an assistant, not a replacement"
-  },
-  {
-    icon: "fa-solid fa-lightbulb",
-    title: "Problem-Solving",
-    description: "Tackle development challenges under time and resource constraints"
-  },
-  {
-    icon: "fa-solid fa-balance-scale",
-    title: "Fair Competition",
-    description: "Maintain integrity through transparent and ethical AI usage"
+    position: "3rd Place",
+    badge: "Third Place",
+    team: "Quantum Quest",
+    leader: "Rohan Naik",
+    glow: "from-cyan-400/30 to-blue-300/15",
+    border: "border-cyan-300/45",
   },
 ];
 
-const TIMELINE = [
+const PRIZES = [
   {
-    round: "Round 1",
-    title: "Rapid Quiz",
-    duration: "20-30 minutes",
-    description: "Multiple-choice questions testing game development and AI knowledge. Top performers advance to Round 2.",
-    icon: "fa-solid fa-clipboard-question"
+    label: "Winner Prize",
+    src: "https://github.com/user-attachments/assets/156538db-8a67-4c34-baca-94539af71352",
   },
   {
-    round: "Round 2",
-    title: "Game Development",
-    duration: "3 hours",
-    description: "Build a playable game using AI assistance. Focus on functionality, creativity, and smart AI integration.",
-    icon: "fa-solid fa-code"
+    label: "Runner-up Prize",
+    src: "https://github.com/user-attachments/assets/1ba5016e-5aa1-45e1-b3a1-fff3ee2e4e5b",
   },
   {
-    round: "Round 3",
-    title: "Testing & Judging",
-    duration: "Demo + Q&A",
-    description: "Present your game, demonstrate gameplay, explain your development process, and answer judges' questions.",
-    icon: "fa-solid fa-trophy"
+    label: "3rd Place Prize",
+    src: "https://github.com/user-attachments/assets/857bb249-dd6d-440c-87c0-b762fe1c354a",
   },
 ];
-
-const JUDGING_CRITERIA = [
-  { category: "Gameplay & UX", percentage: 40, color: "from-accent to-secondary" },
-  { category: "Functionality", percentage: 20, color: "from-secondary to-accent" },
-  { category: "Creativity", percentage: 15, color: "from-accent to-highlight" },
-  { category: "AI Usage", percentage: 15, color: "from-highlight to-accent" },
-  { category: "Presentation", percentage: 10, color: "from-secondary to-highlight" },
-];
-
-const RULES = {
-  participation: [
-    "Teams must consist of 2-3 members",
-    "All team members must be registered before the deadline",
-    "Event Date: April 15, 2026 | Start Time: 10:00 AM"
-  ],
-  development: [
-    "Problem statement will be provided at the event start time",
-    "College lab PCs will be provided to each team",
-    "Any tech stack allowed (HTML/CSS/JS, Unity, Godot, etc.)",
-    "Games must be playable and participants must understand their code",
-    "No pre-built assets, sprites, sounds, or templates allowed",
-    "Mobile phones are not permitted during development",
-    "Games must be built from scratch during the 3-hour event"
-  ],
-  aiUsage: [
-    "Only AI tools provided by organizers are allowed",
-    "Cannot use personal AI tools (ChatGPT, Claude, Copilot, etc.)",
-    "AI should assist development, not automate entire features",
-    "Teams must understand and explain all AI-generated code"
-  ],
-  submission: [
-    "Submit game build, playable demo, and brief documentation",
-    "Include instructions on how to run/play your game",
-    "Be prepared to present and defend your work in Round 3"
-  ]
-};
 
 export default function GameCraft() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const els = document.querySelectorAll(".reveal");
-    els.forEach((el) => observer.observe(el));
-
-    setTimeout(() => {
-      els.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        const inView = rect.top < window.innerHeight && rect.bottom > 0;
-        if (inView) el.classList.add("in");
-      });
-    }, 0);
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <div className="selection:bg-accent/30 selection:text-white">
       <Header />
       <main className="pt-20">
-        {/* Hero Section with Split Layout */}
-        <section className="relative min-h-[calc(100vh-5rem)] flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden py-12">
-          {/* Minimal Background Glow */}
+        <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-gradient-radial from-accent/15 via-accent/5 to-transparent rounded-full blur-[100px]" />
+            <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-gradient-to-r from-indigo-600/25 via-purple-600/20 to-fuchsia-600/15 blur-[120px] rounded-full" />
           </div>
 
-          <div className="relative z-10 container mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left Side - Content */}
-              <div className="text-center lg:text-left">
-                {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass border border-accent/30 mb-8 animate-fadeUp">
-                  <i className="fa-solid fa-robot text-highlight text-sm"></i>
-                  <span className="text-sm text-white/80 font-medium">AI-Powered Game Development Challenge</span>
-                </div>
+          <div className="relative z-10 container mx-auto max-w-5xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/35 bg-emerald-300/10 px-4 py-2 text-sm font-medium text-emerald-100">
+              <i className="fa-solid fa-circle-check" /> Event Successfully Completed
+            </span>
+            <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
+              GameCraft <span className="text-gradient">– AI Game Development Challenge</span>
+            </h1>
+            <p className="mt-5 text-base sm:text-lg text-white/75 max-w-3xl mx-auto leading-relaxed">
+              An exciting 3-hour game development challenge where creativity met innovation.
+            </p>
+          </div>
+        </section>
 
-                {/* Title */}
-                <h1 
-                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 animate-fadeUp"
-                  style={{ 
-                    animationDelay: '0.1s',
-                    textShadow: '0 0 80px rgba(177, 59, 255, 0.4)'
-                  }}
+        <section className="px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl sm:text-4xl font-bold">Results & <span className="text-gradient">Winners</span></h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {WINNERS.map((winner) => (
+                <article
+                  key={winner.position}
+                  className={`relative overflow-hidden rounded-2xl glass p-6 border ${winner.border} transition-all duration-300 hover:-translate-y-1`}
                 >
-                  <span className="text-gradient">GameCraft</span>
-                </h1>
-
-                {/* Subtitle */}
-                <p className="text-lg sm:text-xl text-white/70 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed animate-fadeUp" style={{ animationDelay: '0.2s' }}>
-                  Design, build, and refine a playable game using controlled AI assistance
-                </p>
-
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 animate-fadeUp" style={{ animationDelay: '0.3s' }}>
-                  <a
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSfqB6giCyfKgmd8FxFov-VN-cDsjD0YwFInO-hI3W2zTwamWA/viewform"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-full sm:w-auto px-8 py-4 rounded-xl bg-highlight text-ink font-bold hover:scale-[1.02] transition-all duration-300 shadow-[0_0_40px_rgba(255,211,78,0.3)] hover:shadow-[0_0_60px_rgba(255,211,78,0.5)]"
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      Register Now
-                      <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${winner.glow} pointer-events-none`} />
+                  <div className="relative z-10">
+                    <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">
+                      {winner.badge}
                     </span>
-                  </a>
-                  <a
-                    href="#overview"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.querySelector('#overview')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="group w-full sm:w-auto px-8 py-4 rounded-xl glass border border-white/10 hover:border-accent/50 font-semibold hover:scale-[1.02] transition-all duration-300"
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      View Details
-                      <i className="fa-solid fa-chevron-down group-hover:translate-y-1 transition-transform"></i>
-                    </span>
-                  </a>
-                </div>
-              </div>
+                    <h3 className="mt-4 text-xl font-bold text-white">{winner.position}</h3>
+                    <p className="mt-2 text-white/80">
+                      Team: <span className="font-semibold text-white">{winner.team}</span>
+                    </p>
+                    <p className="mt-1 text-white/70 text-sm">Leader: {winner.leader}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-              {/* Right Side - Image Grid */}
-              <div className="relative animate-fadeUp" style={{ animationDelay: '0.4s' }}>
-                <div className="relative">
-                  {/* Main Large Image */}
-                  <div className="relative rounded-2xl overflow-hidden glass border border-white/10 shadow-[0_8px_32px_rgba(177,59,255,0.3)]">
+        <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 bg-white/[0.02]">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl sm:text-4xl font-bold">Prize <span className="text-gradient">Showcase</span></h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {PRIZES.map((prize) => (
+                <figure
+                  key={prize.label}
+                  className="group glass rounded-2xl p-3 border border-white/10 overflow-hidden"
+                >
+                  <div className="overflow-hidden rounded-xl">
                     <img
-                      src={gamecraftHero}
-                      alt="GameCraft Challenge"
-                      className="w-full h-auto object-cover"
+                      src={prize.src}
+                      alt={prize.label}
+                      loading="lazy"
+                      className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Event Overview */}
-        <section id="overview" className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-          <div className="container mx-auto max-w-4xl">
-            <div className="reveal text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                Event <span className="text-gradient">Overview</span>
-              </h2>
-              <div className="text-white/70 text-lg leading-relaxed">
-                <p>
-                  GameCraft is an innovative 3-hour game development competition exploring the intersection of creativity and AI. Participants receive a problem statement at the event start and must design and build playable games from scratch using AI tools strategically. All development happens on provided college lab PCs with no pre-built assets allowed. This challenge emphasizes practical AI application while maintaining human creativity at the core.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Event Details - Date, Time, Duration */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto max-w-5xl">
-            <div className="reveal glass rounded-2xl p-8 sm:p-10 border border-white/10">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">
-                Event <span className="text-gradient">Details</span>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center p-6 rounded-xl bg-white/[0.02] border border-white/5">
-                  <i className="fa-solid fa-calendar-day text-3xl text-highlight mb-3"></i>
-                  <h3 className="text-sm font-semibold text-white/60 mb-2">Event Date</h3>
-                  <p className="text-xl font-bold">April 15, 2026</p>
-                </div>
-                <div className="text-center p-6 rounded-xl bg-white/[0.02] border border-white/5">
-                  <i className="fa-solid fa-clock text-3xl text-highlight mb-3"></i>
-                  <h3 className="text-sm font-semibold text-white/60 mb-2">Start Time</h3>
-                  <p className="text-xl font-bold">10:00 AM</p>
-                </div>
-                <div className="text-center p-6 rounded-xl bg-white/[0.02] border border-white/5">
-                  <i className="fa-solid fa-hourglass-half text-3xl text-highlight mb-3"></i>
-                  <h3 className="text-sm font-semibold text-white/60 mb-2">Duration</h3>
-                  <p className="text-xl font-bold">3 Hours</p>
-                </div>
-              </div>
-              <div className="mt-6 p-4 rounded-xl bg-accent/10 border border-accent/30">
-                <div className="flex items-start gap-3">
-                  <i className="fa-solid fa-info-circle text-highlight mt-1"></i>
-                  <p className="text-white/80 text-sm">
-                    <strong>Important:</strong> Problem statement will be revealed at the event start time. All development must be done on college lab PCs provided to each team.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Objectives Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">{/* Reduced top padding since previous section has padding */}
-          <div className="container mx-auto max-w-6xl">
-            <div className="reveal text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Competition <span className="text-gradient">Objectives</span>
-              </h2>
-              <p className="text-white/70 text-lg max-w-2xl mx-auto">
-                What you'll achieve through this challenge
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {OBJECTIVES.map((obj, idx) => (
-                <div
-                  key={obj.title}
-                  className="reveal glass rounded-2xl p-6 border border-white/10 hover:border-accent/30 transition-all duration-300 hover:scale-[1.02]"
-                  style={{ transitionDelay: `${idx * 80}ms` }}
-                >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-secondary flex items-center justify-center mb-4">
-                    <i className={`${obj.icon} text-white text-xl`}></i>
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">{obj.title}</h3>
-                  <p className="text-white/70 text-sm leading-relaxed">
-                    {obj.description}
-                  </p>
-                </div>
+                  <figcaption className="mt-3 text-sm text-white/75">{prize.label}</figcaption>
+                </figure>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Event Structure / Timeline */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-          <div className="container mx-auto max-w-5xl">
-            <div className="reveal text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Event <span className="text-gradient">Structure</span>
-              </h2>
-              <p className="text-white/70 text-lg">
-                Three rounds from quiz to final presentation
+        <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="container mx-auto max-w-4xl">
+            <div className="glass rounded-3xl border border-white/10 p-8 sm:p-10 text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Event <span className="text-gradient">Highlights</span></h2>
+              <p className="text-white/75 leading-relaxed">
+                GameCraft was conducted smoothly with high participation from enthusiastic teams.
+                The challenge delivered creative game ideas, engaging competition, and strong collaboration throughout the 3-hour session.
+                Thanks to the organizers and mentors, the event execution remained structured, energetic, and impactful from start to finish.
               </p>
-            </div>
-
-            <div className="space-y-6">
-              {TIMELINE.map((round, idx) => (
-                <div
-                  key={round.round}
-                  className="reveal glass rounded-2xl p-6 sm:p-8 border border-white/10 hover:border-accent/30 transition-all duration-300"
-                  style={{ transitionDelay: `${idx * 100}ms` }}
-                >
-                  <div className="flex flex-col sm:flex-row gap-6 items-start">
-                    {/* Icon */}
-                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-accent to-secondary flex items-center justify-center flex-shrink-0">
-                      <i className={`${round.icon} text-white text-2xl`}></i>
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <span className="px-3 py-1 rounded-lg bg-accent/20 border border-accent/30 text-sm font-semibold text-highlight">
-                          {round.round}
-                        </span>
-                        <h3 className="text-xl sm:text-2xl font-bold">{round.title}</h3>
-                        <span className="text-white/60 text-sm">• {round.duration}</span>
-                      </div>
-                      <p className="text-white/70 leading-relaxed">
-                        {round.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
 
-        {/* Team & Rules */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
+        <section className="px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
+          <div className="container mx-auto max-w-4xl">
+            <div className="rounded-2xl border border-emerald-300/35 bg-emerald-300/10 p-6 sm:p-8 text-center">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Participation Appreciation</h2>
+              <p className="text-emerald-100/90 text-base sm:text-lg">
+                We thank all participants for their enthusiasm and efforts.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 sm:px-6 lg:px-8 pb-20">
           <div className="container mx-auto max-w-6xl">
-            <div className="reveal text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Team & <span className="text-gradient">Rules</span>
-              </h2>
-              <p className="text-white/70 text-lg">
-                Important guidelines for all participants
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8">
+              Event <span className="text-gradient">Gallery</span>
+            </h2>
+            <div className="rounded-3xl border border-dashed border-white/25 bg-white/[0.03] p-10 text-center">
+              <i className="fa-solid fa-images text-4xl text-white/60" />
+              <p className="mt-4 text-white/70">
+                Placeholder for event photos and gameplay screenshots.
               </p>
-            </div>
-
-            {/* Team Size */}
-            <div className="reveal text-center mb-8">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl glass border border-accent/30">
-                <i className="fa-solid fa-users text-highlight text-xl"></i>
-                <span className="font-bold text-lg">Team Size: <span className="text-gradient">2-3 Members</span></span>
-              </div>
-            </div>
-
-            {/* Rules Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Participation */}
-              <div className="reveal glass rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-user-check text-highlight"></i>
-                  Participation
-                </h3>
-                <ul className="space-y-3">
-                  {RULES.participation.map((rule, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-white/70 text-sm">
-                      <i className="fa-solid fa-check text-accent mt-1"></i>
-                      <span>{rule}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Development */}
-              <div className="reveal glass rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-code text-highlight"></i>
-                  Development
-                </h3>
-                <ul className="space-y-3">
-                  {RULES.development.map((rule, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-white/70 text-sm">
-                      <i className="fa-solid fa-check text-accent mt-1"></i>
-                      <span>{rule}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* AI Usage */}
-              <div className="reveal glass rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-robot text-highlight"></i>
-                  AI Usage
-                </h3>
-                <ul className="space-y-3">
-                  {RULES.aiUsage.map((rule, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-white/70 text-sm">
-                      <i className="fa-solid fa-check text-accent mt-1"></i>
-                      <span>{rule}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Submission */}
-              <div className="reveal glass rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-paper-plane text-highlight"></i>
-                  Submission
-                </h3>
-                <ul className="space-y-3">
-                  {RULES.submission.map((rule, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-white/70 text-sm">
-                      <i className="fa-solid fa-check text-accent mt-1"></i>
-                      <span>{rule}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Judging Criteria */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto max-w-4xl">
-            <div className="reveal text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Judging <span className="text-gradient">Criteria</span>
-              </h2>
-              <p className="text-white/70 text-lg">
-                How your game will be evaluated
-              </p>
-            </div>
-
-            <div className="reveal glass rounded-2xl p-8 border border-white/10">
-              <div className="space-y-6">
-                {JUDGING_CRITERIA.map((criterion, idx) => (
-                  <div key={criterion.category} className="space-y-2">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold text-lg">{criterion.category}</h3>
-                      <span className="text-2xl font-bold text-gradient">{criterion.percentage}%</span>
-                    </div>
-                    <div className="relative h-3 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${criterion.color} rounded-full transition-all duration-1000 ease-out`}
-                        style={{ 
-                          width: `${criterion.percentage}%`,
-                          animationDelay: `${idx * 100}ms`
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-          <div className="container mx-auto max-w-4xl">
-            <div className="reveal text-center glass rounded-3xl p-12 border border-white/10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                Ready to <span className="text-gradient">Build?</span>
-              </h2>
-              <p className="text-lg text-white/70 mb-8 max-w-2xl mx-auto">
-                Join GameCraft and showcase your game development skills enhanced by AI. Register now to secure your spot!
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSfqB6giCyfKgmd8FxFov-VN-cDsjD0YwFInO-hI3W2zTwamWA/viewform"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group w-full sm:w-auto px-8 py-4 rounded-xl bg-highlight text-ink font-bold hover:scale-[1.02] transition-all duration-300 shadow-[0_0_40px_rgba(255,211,78,0.3)]"
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    Register Now
-                    <i className="fa-solid fa-rocket group-hover:translate-x-1 transition-transform"></i>
-                  </span>
-                </a>
-                <a
-                  href="/technotsav"
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl glass border border-white/10 hover:border-accent/50 font-semibold hover:scale-[1.02] transition-all duration-300"
-                >
-                  View All Events
-                </a>
-              </div>
             </div>
           </div>
         </section>
